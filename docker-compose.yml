@@ -1,9 +1,11 @@
 services:
-  telegram-bot:
+  main:
     build: .
-    container_name: telegram_bot
+    container_name: border_scraper_telegram_bot
     restart: always
-    environment:
-      - BOT_TOKEN=${BOT_TOKEN}
+    env_file:
+      - .env
     volumes:
       - .:/app
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
