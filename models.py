@@ -1,5 +1,4 @@
-from sqlalchemy import Column, Integer, BigInteger, String, Text, ForeignKey, DateTime, func
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, BigInteger, String, Text, DateTime, func, Boolean
 from db_functions import Base
 
 class DBUser(Base):
@@ -16,6 +15,11 @@ class DBUser(Base):
     last_name = Column(String(50), nullable=True)
     joined_at = Column(DateTime(timezone=True), server_default=func.now())
     lang = Column(String(5), default="en")
+
+    # Slowly changing dimension fields
+    valid_from = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    valid_to = Column(DateTime(timezone=True), nullable=True)  # NULL = still active
+    is_current = Column(Boolean, default=True, nullable=False)
 
     # New car-related columns (nullable)
     car_1 = Column(String(10), nullable=True)
