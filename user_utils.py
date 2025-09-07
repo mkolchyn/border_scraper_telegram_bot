@@ -1,59 +1,65 @@
-import os
-import time
-import json
 from telegram import User
-from dotenv import load_dotenv
-
-load_dotenv()
-
-USERS_LOG_FILE = os.getenv("USERS_LOG_FILE")
-
-def load_users():
-    if USERS_LOG_FILE and os.path.exists(USERS_LOG_FILE):
-        with open(USERS_LOG_FILE, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return {}
-
-def save_users(users):
-    if USERS_LOG_FILE:
-        with open(USERS_LOG_FILE, "w", encoding="utf-8") as f:
-            json.dump(users, f, indent=2, ensure_ascii=False)
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import Session
+from db_functions import SessionLocal
+from models import DBUser, UserAction
 
 def log_user_action(user: User, action: str):
-    users = load_users()
-    uid = str(user.id)
-    if uid not in users:
-        users[uid] = {
-            "user_id": user.id,
-            "username": user.username,
-            "first_name": user.first_name,
-            "last_name": user.last_name,
-            "joined_at": int(time.time()),
-            "actions": []
-        }
-    users[uid]["actions"].append({
-        "action": action,
-        "timestamp": int(time.time())
-    })
-    save_users(users)
-    # print(f"[LOG] {user.username or user.first_name} -> {action}")
+    """Log a user action into Postgres."""
+    session: Session = SessionLocal()
+    try:
+        # Lookup by telegram_id, not surrogate id
+        db_user = session.query(DBUser).filter_by(telegram_id=user.id).order_by(DBUser.surr_id.desc()).first()
+        if not db_user:
+            db_user = DBUser(
+                telegram_id=user.id,
+                username=user.username,
+                first_name=user.first_name,
+                last_name=user.last_name,
+            )
+            session.add(db_user)
+            session.flush()  # ensures surrogate id is available
 
-def get_user_lang(user_id):
-    users = load_users()
-    uid = str(user_id)
-    return users.get(uid, {}).get("lang", "en")
+        # Save action, link to surrogate id
+        user_action = UserAction(
+            telegram_id=db_user.telegram_id,
+            action=action
+        )
+        session.add(user_action)
+
+        session.commit()
+
+    except IntegrityError as e:
+        session.rollback()
+        print(f"[ERROR] Failed to log action: {e}")
+    finally:
+        session.close()
+
+def get_user_lang(user_id: int) -> str:
+    """Return stored language for user, default 'en' if not set."""
+    session: Session = SessionLocal()
+    try:
+        db_user = session.query(DBUser).filter_by(telegram_id=user_id).order_by(DBUser.surr_id.desc()).first()
+        return db_user.lang if db_user and db_user.lang else "en"
+    finally:
+        session.close()
 
 def set_user_lang(user: User, lang: str):
-    users = load_users()
-    uid = str(user.id)
-    if uid not in users:
-        users[uid] = {
-            "user_id": user.id,
-            "username": user.username,
-            "first_name": user.first_name,
-            "last_name": user.last_name,
-            "joined_at": int(time.time()),
-            "actions": []
-        }
-    users[uid]["lang"] = lang
-    save_users(users)
+    """Set or update language preference for user."""
+    session: Session = SessionLocal()
+    try:
+        db_user = session.query(DBUser).filter_by(telegram_id=user.id).order_by(DBUser.surr_id.desc()).first()
+        if db_user:
+            db_user.lang = lang
+        else:
+            db_user = DBUser(
+                telegram_id=user.id,
+                username=user.username,
+                first_name=user.first_name,
+                last_name=user.last_name,
+                lang=lang
+            )
+            session.add(db_user)
+        session.commit()
+    finally:
+        session.close()
