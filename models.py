@@ -16,15 +16,15 @@ class DBUser(Base):
     joined_at = Column(DateTime(timezone=True), server_default=func.now())
     lang = Column(String(5), default="en")
 
-    # Slowly changing dimension fields
-    valid_from = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-    valid_to = Column(DateTime(timezone=True), nullable=True)  # NULL = still active
-    is_current = Column(Boolean, default=True, nullable=False)
-
     # New car-related columns (nullable)
     car_1 = Column(String(10), nullable=True)
     car_2 = Column(String(10), nullable=True)
     car_3 = Column(String(10), nullable=True)
+
+    # Slowly changing dimension fields
+    valid_from = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    valid_to = Column(DateTime(timezone=True), nullable=True)  # NULL = still active
+    is_current = Column(Boolean, default=True, nullable=False)
 
 class UserAction(Base):
     __tablename__ = "user_actions"

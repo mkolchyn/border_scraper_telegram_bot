@@ -3,3 +3,5 @@ httpx==0.24.1   # used internally by python-telegram-bot for networking
 dotenv
 psycopg2-binary
 sqlalchemy
+pandas
+matplotlib

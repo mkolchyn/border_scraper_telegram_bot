@@ -4,9 +4,10 @@ from io import BytesIO
 from telegram import InlineKeyboardMarkup, InputMediaPhoto, Update
 from telegram.constants import ParseMode
 from telegram.ext import ContextTypes
-from texts import TEXTS, language_menu
-from menus import build_main_menu, build_country_menu
+from texts import MAIN_MENU, STATS, ESTIMATIONS, language_menu
+from menus import build_main_menu, build_stats_menu, build_country_menu, build_estimations_menu
 from user_utils import log_user_action, get_user_lang, set_user_lang
+from db_functions import get_queue_speed, create_queue_table_image
 from callbacks import CALLBACK_MAP
 import os
 from dotenv import load_dotenv
@@ -64,30 +65,79 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         lang = "en" if data == "lang_en" else "ru"
         set_user_lang(query.from_user, lang)
         await query.edit_message_text(
-            TEXTS[lang]["welcome"],
+            MAIN_MENU[lang]["welcome"],
             reply_markup=InlineKeyboardMarkup(build_main_menu(lang)),
+            parse_mode=ParseMode.HTML
+        )
+        return
+    
+    if data == "stats":
+        await query.edit_message_text(
+            STATS[user_lang]["welcome"],
+            reply_markup=InlineKeyboardMarkup(build_stats_menu(user_lang)),
             parse_mode=ParseMode.HTML,
             disable_web_page_preview=True
         )
         return
 
-    if data == "main":
+    if data == "estimations":
+        await query.edit_message_text(
+            ESTIMATIONS[user_lang]["choose_border_point"],
+            reply_markup=InlineKeyboardMarkup(build_estimations_menu(user_lang))
+        )
+        return
+
+    if data in ("benyakoni", "brest_bts", "kamenny_log", "grigorovschina"):
+        border_point_id = ESTIMATIONS[user_lang]["border_points_id"][data]
+        
+        # Fetch the latest queue speed data from the remote DB
+        rows = get_queue_speed(border_point_id)
+        
+        # Create a table image
+        img_bytes = create_queue_table_image(rows, title=f"Queue Speed at {data.replace('_', ' ').title()}")
+        
+        if img_bytes:
+            await query.edit_message_media(
+                media=InputMediaPhoto(
+                    media=img_bytes,
+                    caption=ESTIMATIONS[user_lang]["column_explanation"],
+                    parse_mode=ParseMode.HTML
+                ),
+                reply_markup=InlineKeyboardMarkup(build_estimations_menu(user_lang))
+            )
+            # # Send explanation after the table
+            # await query.message.reply_text(
+            #     ESTIMATIONS[user_lang]["column_explanation"],
+            #     parse_mode="HTML"
+            # )
+        else:
+            await query.edit_message_text(
+                "No data available.",
+                reply_markup=InlineKeyboardMarkup(build_estimations_menu(user_lang))
+            )
+        return
+
+    if data == "menu":
         await query.message.delete()
         reply_markup = InlineKeyboardMarkup(build_main_menu(user_lang))
-        await query.message.chat.send_message(TEXTS[user_lang]["choose_country"], reply_markup=reply_markup)
+        await query.message.chat.send_message(
+            MAIN_MENU[user_lang]["welcome"], 
+            reply_markup=reply_markup,
+            parse_mode=ParseMode.HTML
+        )
 
     elif data in ("lithuania", "latvia", "poland"):
         menu = build_country_menu(data, user_lang)
-        await query.edit_message_text(TEXTS[user_lang]["choose_range"], reply_markup=InlineKeyboardMarkup(menu))
+        await query.edit_message_text(STATS[user_lang]["choose_range"], reply_markup=InlineKeyboardMarkup(menu))
 
     elif data in CALLBACK_MAP:
         path_prefix, file_suffix = CALLBACK_MAP[data]
         time_key = data.split("_")[1]
-        caption = TEXTS[user_lang]["captions"][time_key]
+        caption = STATS[user_lang]["captions"][time_key]
         menu = build_country_menu(path_prefix, user_lang)
         await send_or_edit_photo(query, path_prefix, file_suffix, caption, menu, use_bytes=True)
 
     elif data == "exit":
-        await query.edit_message_text(TEXTS[user_lang]["goodbye"])
+        await query.edit_message_text(STATS[user_lang]["goodbye"])
     else:
         await query.edit_message_text(f"You selected: {data.capitalize()}")
