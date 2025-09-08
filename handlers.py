@@ -52,6 +52,17 @@ async def restart(update: Update, context: ContextTypes.DEFAULT_TYPE):
             reply_markup=InlineKeyboardMarkup(language_menu)
         )
 
+async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.message:
+        log_user_action(update.message.from_user, "menu")
+        user_lang = get_user_lang(update.message.from_user.id)
+        await update.message.reply_text(
+            MAIN_MENU[user_lang]["welcome"], 
+            reply_markup=InlineKeyboardMarkup(build_main_menu(user_lang)),
+            parse_mode=ParseMode.HTML
+        )
+
+
 # Button handler
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -117,7 +128,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
         return
 
-    if data == "menu":
+    elif data == "menu":
         await query.message.delete()
         reply_markup = InlineKeyboardMarkup(build_main_menu(user_lang))
         await query.message.chat.send_message(
