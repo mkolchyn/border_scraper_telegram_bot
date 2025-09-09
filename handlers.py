@@ -2,11 +2,11 @@ from sqlalchemy import func
 from telegram import InlineKeyboardMarkup, InputMediaPhoto, Update
 from telegram.constants import ParseMode
 from telegram.ext import ContextTypes
-from texts import MAIN_MENU, STATS, ESTIMATIONS, language_menu
-from menus import build_main_menu, build_stats_menu, build_country_menu, build_estimations_menu, build_month_menu, build_year_menu
-from user_utils import log_user_action, get_user_lang, set_user_lang, send_or_edit_photo
+from texts import MAIN_MENU, STATS, CURRENT, ESTIMATIONS, language_menu
+from menus import build_main_menu, build_current_menu, build_stats_menu, build_country_menu, build_estimations_menu, build_month_menu, build_year_menu
+from user_utils import log_user_action, get_user_lang, set_user_lang, send_or_edit_photo, get_queue_length_current
 from db_functions import get_queue_speed, create_queue_table_image
-from callbacks import CALLBACK_MAP, CALLBACK_MAP_ARCHIVE
+from callbacks import CALLBACK_MAP, CALLBACK_MAP_ARCHIVE, CALLBACK_MAP_CURRENT
 
 
 # /start command
@@ -56,7 +56,30 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             parse_mode=ParseMode.HTML
         )
         return
-    
+
+    if data == "current":
+        await query.edit_message_text(
+            CURRENT[user_lang]["current_info"],
+            reply_markup=InlineKeyboardMarkup(build_current_menu(user_lang)),
+            parse_mode=ParseMode.HTML,
+            disable_web_page_preview=True
+        )
+        return
+
+    elif data in CALLBACK_MAP_CURRENT:
+        checkpoint_id, border_points_names = CALLBACK_MAP_CURRENT[data]
+        countCar, countTruck, countBus, countMotorcycle = get_queue_length_current(checkpoint_id)
+
+        message = ESTIMATIONS[user_lang]["border_points_names"][border_points_names] + "\n\n"
+        message += f"🚗 {countCar}    🚚 {countTruck}    🚌 {countBus}    🏍️ {countMotorcycle}\n\n"
+
+        await query.edit_message_text(
+            message,
+            reply_markup=InlineKeyboardMarkup(build_current_menu(user_lang)),
+            parse_mode=ParseMode.HTML
+        )
+        return
+
     if data == "stats":
         await query.edit_message_text(
             STATS[user_lang]["welcome"],

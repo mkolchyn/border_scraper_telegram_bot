@@ -9,6 +9,7 @@ from datetime import datetime, timezone
 import time
 import httpx
 from io import BytesIO
+import requests
 import os
 from dotenv import load_dotenv
 
@@ -125,3 +126,32 @@ def set_user_lang(user: User, lang: str):
         session.commit()
     finally:
         session.close()
+
+
+def fetch_data_from_api(url):
+    """Fetch JSON data from the provided API."""
+    response = requests.get(url)
+    
+    if response.status_code == 200:
+        return response.json()
+    else:
+        raise Exception(f"Failed to fetch data: {response.status_code}, {response.text}")
+
+def get_queue_length_current(checkpoint_id: str):
+    try:
+        url = "https://belarusborder.by/info/checkpoint?token=bts47d5f-6420-4f74-8f78-42e8e4370cc4"
+
+        data = fetch_data_from_api(url)
+
+        # Loop through all data and insert based on the mapped zone
+        for cp in data['result']:
+            if cp['id'] == checkpoint_id:
+                countCar = cp['countCar']
+                countTruck = cp['countTruck']
+                countBus = cp['countBus']
+                countMotorcycle = cp['countMotorcycle']
+        
+        return countCar, countTruck, countBus, countMotorcycle
+        
+    except Exception as e:
+        print(f"Error: {e}")

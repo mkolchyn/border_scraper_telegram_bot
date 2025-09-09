@@ -1,3 +1,11 @@
+CALLBACK_MAP_CURRENT = {
+    "curr_kamenny_log": ("b60677d4-8a00-4f93-a781-e129e1692a03", "kamenny_log"),
+    "curr_benyakoni": ("53d94097-2b34-11ec-8467-ac1f6bf889c0", "benyakoni"),
+    "curr_brest_bts": ("a9173a85-3fc0-424c-84f0-defa632481e4", "brest_bts"),
+    "curr_grigorovschina": ("ffe81c11-00d6-11e8-a967-b0dd44bde851", "grigorovschina"),
+    "curr_kozlovichi": ("98b5be92-d3a5-4ba2-9106-76eb4eb3df49", "kozlovichi")
+}
+
 CALLBACK_MAP = {
     "li_3h":    ("lithuania", "queue_length_visual_3_hours.png"),
     "li_24h":   ("lithuania", "queue_length_visual_24_hours.png"),

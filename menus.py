@@ -3,8 +3,19 @@ from texts import BUTTONS
 
 def build_main_menu(lang: str):
     return [
+        [InlineKeyboardButton(BUTTONS[lang]["current"], callback_data="current")],
         [InlineKeyboardButton(BUTTONS[lang]["stats"], callback_data="stats")],
         [InlineKeyboardButton(BUTTONS[lang]["estimations"], callback_data="estimations")]
+    ]
+
+def build_current_menu(lang: str):
+    return [
+        [InlineKeyboardButton(BUTTONS[lang]["kamenny_log"], callback_data="curr_kamenny_log")],
+        [InlineKeyboardButton(BUTTONS[lang]["benyakoni"], callback_data="curr_benyakoni")],
+        [InlineKeyboardButton(BUTTONS[lang]["brest_bts"], callback_data="curr_brest_bts")],
+        [InlineKeyboardButton(BUTTONS[lang]["kozlovichi"], callback_data="curr_kozlovichi")],
+        [InlineKeyboardButton(BUTTONS[lang]["grigorovschina"], callback_data="curr_grigorovschina")],
+        [InlineKeyboardButton(BUTTONS[lang]["menu"], callback_data="menu")],
     ]
 
 def build_stats_menu(lang: str):

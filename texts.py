@@ -25,6 +25,33 @@ MAIN_MENU = {
     }   
 }
 
+CURRENT = {
+    "en": {
+        "current_info": (
+            "Here you can find the current queue information for border crossing points "
+            "from <b>Belarus ➝ EU</b>.\n\n"
+            "The information is sourced from "
+            "<a href='https://declarant.by'>declarant.by</a> "
+            "and reflects the number of vehicles in <b>buffer zones</b>.\n\n"
+            "➡️ <i>Choose a border crossing point:</i>"
+        ),
+        "choose_border_point": "Choose a border crossing point:",
+    },
+    "ru": {
+        "current_info": (
+            "Здесь вы можете найти актуальную информацию об очередях "
+            "на пограничных пунктах пропуска из <b>Беларуси ➝ ЕС</b>.\n\n"
+            "Информация берётся с сайта "
+            "<a href='https://declarant.by'>declarant.by</a> "
+            "и отражает количество автомобилей в <b>буферных зонах</b>.\n\n"
+            "➡️ <i>Выберите пограничный пункт:</i>"
+        ),
+        "choose_border_point": "Выберите пограничный пункт:",
+
+    }
+}
+
+
 # Translations for messages and captions
 STATS = {
     "en": {
@@ -151,6 +178,7 @@ ESTIMATIONS = {
             "brest_bts": "Brest BTS (\"Varshavskiy Most\")",
             "kamenny_log": "Kamenny Log",
             "grigorovschina": "Grigorovschina",
+            "kozlovichi": "Kozlovichi",
         }
     },
     "ru": {
@@ -183,6 +211,7 @@ ESTIMATIONS = {
             "brest_bts": "Брест БТС (\"Варшавский мост\")",
             "kamenny_log": "Каменный Лог",
             "grigorovschina": "Григоровщина",
+            "kozlovichi": "Козловичи",
         }
     }   
 }
@@ -190,6 +219,7 @@ ESTIMATIONS = {
 # Button labels
 BUTTONS = {
     "en": {
+        "current": "Current Queue Info",
         "stats":"Show border statistics",
         "estimations": "Estimate border speed",
         "country_lt": "Lithuania 🇱🇹",
@@ -203,6 +233,7 @@ BUTTONS = {
         "benyakoni": "Benyakoni  🇱🇹",
         "kamenny_log": "Kamenny Log  🇱🇹",
         "brest_bts": "Brest BTS (\"Varshavskiy Most\") 🇵🇱",
+        "kozlovichi": "Kozlovichi 🇵🇱",
         "grigorovschina": "Grigorovschina 🇱🇻",
         "archive": "Archive",
         "2024": "2024 year",
@@ -221,6 +252,7 @@ BUTTONS = {
         "december": "December"
     },
     "ru": {
+        "current": "Актуальная информация об очередях",
         "stats":"Показать статистику по границе",
         "estimations": "Оценить скорость прохождения границы",
         "country_lt": "Литва 🇱🇹",
@@ -234,6 +266,7 @@ BUTTONS = {
         "benyakoni": "Бенякони  🇱🇹",
         "kamenny_log": "Каменный Лог  🇱🇹",
         "brest_bts": "Брест БТС (\"Варшавский мост\")  🇵🇱",
+        "kozlovichi": "Козловичи  🇵🇱",
         "grigorovschina": "Григоровщина  🇱🇻",
         "archive": "Архив данных",
         "2024": "2024 год",
