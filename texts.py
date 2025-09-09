@@ -1,5 +1,11 @@
 from telegram import InlineKeyboardButton
 
+# Language selection menu
+language_menu = [
+    [InlineKeyboardButton("English 🇬🇧", callback_data="lang_en")],
+    [InlineKeyboardButton("Русский 🇷🇺", callback_data="lang_ru")],
+]
+
 MAIN_MENU = {
     "en": {
         "welcome": (
@@ -38,7 +44,33 @@ STATS = {
             "24h": "Queue length in the last 24 hours",
             "7d": "Queue length in the last 7 days",
             "30d": "Queue length in the last 30 days",
-        }
+            "2024_jan": "Queue length in January 2024",
+            "2024_feb": "Queue length in February 2024",
+            "2024_mar": "Queue length in March 2024",
+            "2024_apr": "Queue length in April 2024",
+            "2024_may": "Queue length in May 2024",
+            "2024_jun": "Queue length in June 2024",
+            "2024_jul": "Queue length in July 2024",
+            "2024_aug": "Queue length in August 2024",
+            "2024_sep": "Queue length in September 2024",
+            "2024_oct": "Queue length in October 2024",
+            "2024_nov": "Queue length in November 2024",
+            "2024_dec": "Queue length in December 2024",
+            "2025_jan": "Queue length in January 2025",
+            "2025_feb": "Queue length in February 2025",
+            "2025_mar": "Queue length in March 2025",
+            "2025_apr": "Queue length in April 2025",
+            "2025_may": "Queue length in May 2025",
+            "2025_jun": "Queue length in June 2025",
+            "2025_jul": "Queue length in July 2025",
+            "2025_aug": "Queue length in August 2025",
+            "2025_sep": "Queue length in September 2025",
+            "2025_oct": "Queue length in October 2025",
+            "2025_nov": "Queue length in November 2025",
+            "2025_dec": "Queue length in December 2025",
+        },
+        "choose_year": "Choose a year:",
+        "choose_month": "Choose a month:"
     },
     "ru": {
         "welcome": (
@@ -57,7 +89,33 @@ STATS = {
             "24h": "Очередь за последние 24 часа",
             "7d": "Очередь за последние 7 дней",
             "30d": "Очередь за последние 30 дней",
-        }
+            "2024_jan": "Очередь за январь 2024",
+            "2024_feb": "Очередь за февраль 2024",
+            "2024_mar": "Очередь за март 2024",
+            "2024_apr": "Очередь за апрель 2024",
+            "2024_may": "Очередь за май 2024",
+            "2024_jun": "Очередь за июнь 2024",
+            "2024_jul": "Очередь за июль 2024",
+            "2024_aug": "Очередь за август 2024",
+            "2024_sep": "Очередь за сентябрь 2024",
+            "2024_oct": "Очередь за октябрь 2024",
+            "2024_nov": "Очередь за ноябрь 2024",
+            "2024_dec": "Очередь за декабрь 2024",
+            "2025_jan": "Очередь за январь 2025",
+            "2025_feb": "Очередь за февраль 2025",
+            "2025_mar": "Очередь за март 2025",
+            "2025_apr": "Очередь за апрель 2025",
+            "2025_may": "Очередь за май 2025",
+            "2025_jun": "Очередь за июнь 2025",
+            "2025_jul": "Очередь за июль 2025",
+            "2025_aug": "Очередь за август 2025",
+            "2025_sep": "Очередь за сентябрь 2025",
+            "2025_oct": "Очередь за октябрь 2025",
+            "2025_nov": "Очередь за ноябрь 2025",
+            "2025_dec": "Очередь за декабрь 2025"
+        },
+        "choose_year": "Выберите год:",
+        "choose_month": "Выберите месяц:"
     },
 }
 
@@ -146,6 +204,21 @@ BUTTONS = {
         "kamenny_log": "Kamenny Log  🇱🇹",
         "brest_bts": "Brest BTS (\"Varshavskiy Most\") 🇵🇱",
         "grigorovschina": "Grigorovschina 🇱🇻",
+        "archive": "Archive",
+        "2024": "2024 year",
+        "2025": "2025 year",
+        "january": "January",
+        "february": "February",
+        "march": "March",
+        "april": "April",
+        "may": "May",
+        "june": "June",
+        "july": "July",
+        "august": "August",
+        "september": "September",
+        "october": "October",
+        "november": "November",
+        "december": "December"
     },
     "ru": {
         "stats":"Показать статистику по границе",
@@ -161,12 +234,21 @@ BUTTONS = {
         "benyakoni": "Бенякони  🇱🇹",
         "kamenny_log": "Каменный Лог  🇱🇹",
         "brest_bts": "Брест БТС (\"Варшавский мост\")  🇵🇱",
-        "grigorovschina": "Григоровщина  🇱🇻"
+        "grigorovschina": "Григоровщина  🇱🇻",
+        "archive": "Архив данных",
+        "2024": "2024 год",
+        "2025": "2025 год",
+        "january": "Январь",
+        "february": "Февраль",
+        "march": "Март",
+        "april": "Апрель",
+        "may": "Май",
+        "june": "Июнь",
+        "july": "Июль",
+        "august": "Август",
+        "september": "Сентябрь",
+        "october": "Октябрь",
+        "november": "Ноябрь",
+        "december": "Декабрь"
     },
 }
-
-# Language selection menu
-language_menu = [
-    [InlineKeyboardButton("English 🇬🇧", callback_data="lang_en")],
-    [InlineKeyboardButton("Русский 🇷🇺", callback_data="lang_ru")],
-]

@@ -1,38 +1,13 @@
-import time
-import httpx
-from io import BytesIO
+from sqlalchemy import func
 from telegram import InlineKeyboardMarkup, InputMediaPhoto, Update
 from telegram.constants import ParseMode
 from telegram.ext import ContextTypes
 from texts import MAIN_MENU, STATS, ESTIMATIONS, language_menu
-from menus import build_main_menu, build_stats_menu, build_country_menu, build_estimations_menu
-from user_utils import log_user_action, get_user_lang, set_user_lang
+from menus import build_main_menu, build_stats_menu, build_country_menu, build_estimations_menu, build_month_menu, build_year_menu
+from user_utils import log_user_action, get_user_lang, set_user_lang, send_or_edit_photo
 from db_functions import get_queue_speed, create_queue_table_image
-from callbacks import CALLBACK_MAP
-import os
-from dotenv import load_dotenv
+from callbacks import CALLBACK_MAP, CALLBACK_MAP_ARCHIVE
 
-load_dotenv()
-
-SERVER_ADDRESS = os.getenv("SERVER_ADDRESS")
-
-# Send or edit photo
-async def send_or_edit_photo(query, path_prefix, file_suffix, caption, keyboard, use_bytes=False):
-    url = f"http://{SERVER_ADDRESS}/{path_prefix}/{file_suffix}"
-
-    if use_bytes:
-        async with httpx.AsyncClient() as client:
-            resp = await client.get(url)
-            resp.raise_for_status()
-            media = InputMediaPhoto(media=BytesIO(resp.content), caption=caption)
-    else:
-        url_with_ts = f"{url}?{int(time.time())}"
-        media = InputMediaPhoto(media=url_with_ts, caption=caption)
-
-    await query.edit_message_media(
-        media=media,
-        reply_markup=InlineKeyboardMarkup(keyboard)
-    )
 
 # /start command
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -116,11 +91,6 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 ),
                 reply_markup=InlineKeyboardMarkup(build_estimations_menu(user_lang))
             )
-            # # Send explanation after the table
-            # await query.message.reply_text(
-            #     ESTIMATIONS[user_lang]["column_explanation"],
-            #     parse_mode="HTML"
-            # )
         else:
             await query.edit_message_text(
                 "No data available.",
@@ -147,6 +117,26 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         caption = STATS[user_lang]["captions"][time_key]
         menu = build_country_menu(path_prefix, user_lang)
         await send_or_edit_photo(query, path_prefix, file_suffix, caption, menu, use_bytes=True)
+
+    elif data in ("lithuania_archive", "latvia_archive", "poland_archive"):
+        await query.message.delete()
+        country = data[:2]
+        menu = build_year_menu(country, user_lang)
+        await query.message.chat.send_message(STATS[user_lang]["choose_year"], reply_markup=InlineKeyboardMarkup(menu))
+
+    elif data in ("li_2024", "la_2024", "po_2024", "li_2025", "la_2025", "po_2025"):
+        country = data[:2]
+        year = data.split("_")[1]
+        menu = build_month_menu(country, year, user_lang)
+        await query.edit_message_text(STATS[user_lang]["choose_month"], reply_markup=InlineKeyboardMarkup(menu))
+
+    elif data in CALLBACK_MAP_ARCHIVE:
+        path_prefix, file_suffix = CALLBACK_MAP_ARCHIVE[data]
+        time_key = "_".join(data.split("_")[1:])
+        year = data.split("_")[1]
+        caption = STATS[user_lang]["captions"][time_key]
+        menu = build_month_menu(path_prefix, year, user_lang)
+        await send_or_edit_photo(query, path_prefix, file_suffix, caption, menu, use_bytes=True, archive=True)
 
     elif data == "exit":
         await query.edit_message_text(STATS[user_lang]["goodbye"])

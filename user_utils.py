@@ -1,4 +1,4 @@
-from telegram import User
+from telegram import User, InputMediaPhoto, InlineKeyboardMarkup
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from sqlalchemy import func
@@ -6,6 +6,37 @@ from datetime import datetime
 from db_functions import SessionLocal
 from models import DBUser, UserAction
 from datetime import datetime, timezone
+import time
+import httpx
+from io import BytesIO
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+SERVER_ADDRESS = os.getenv("SERVER_ADDRESS")
+
+# Send or edit photo
+async def send_or_edit_photo(query, path_prefix, file_suffix, caption, keyboard, use_bytes=False, archive=False):
+    if archive:
+        url = f"http://{SERVER_ADDRESS}/archive/{path_prefix}/{file_suffix}"
+    else:
+        url = f"http://{SERVER_ADDRESS}/{path_prefix}/{file_suffix}"
+
+    if use_bytes:
+        async with httpx.AsyncClient() as client:
+            resp = await client.get(url)
+            resp.raise_for_status()
+            media = InputMediaPhoto(media=BytesIO(resp.content), caption=caption)
+    else:
+        url_with_ts = f"{url}?{int(time.time())}"
+        media = InputMediaPhoto(media=url_with_ts, caption=caption)
+
+    await query.edit_message_media(
+        media=media,
+        reply_markup=InlineKeyboardMarkup(keyboard)
+    )
+
 
 def log_user_action(user: User, action: str):
     """Log a user action into Postgres."""
