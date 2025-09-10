@@ -241,6 +241,21 @@ CARTRACKING = {
             "Use up to 7 characters, only uppercase letters and numbers, "
             "with at least one digit (e.g. <b>ABC123</b>)."
         ),
+        "car_found_in_queue": (
+            "<b>Car Found in Queue!</b>\n\n"
+            "The car with license plate <code>{}</code> is currently in the queue.\n"
+        ),
+        "car_not_found_in_queue": (
+            "<b>Car Not Found in Queue</b>\n\n"
+            "The car with license plate <code>{}</code> is not currently in any queue."
+        ),
+        "car_status_details": (
+            "<b>Car Status Details</b>\n"
+            "• Checkpoint: <b>{}</b>\n"
+            "• License Plate: <b><code>{}</code></b>\n"
+            "• Position in Queue: <b>{}</b>\n"
+            "• Registered: <b>{}</b>\n"
+        ),
     },
     "ru": {
         "car_tracking_intro": (
@@ -266,6 +281,22 @@ CARTRACKING = {
             "Используйте до 7 символов, только заглавные буквы и цифры, "
             "с как минимум одной цифрой (например, <b>ABC123</b>)."
         ),
+        "car_found_in_queue": (
+            "<b>Машина найдена в очереди!</b>\n\n"
+            "Машина с номером <code>{}</code> в данный момент находится в очереди.\n"
+        ),
+        "car_not_found_in_queue": (
+            "<b>Машина не найдена в очереди</b>\n\n"
+            "Машина с номером <code>{}</code> в данный момент не находится в какой-либо очереди."
+        ),
+        "car_status_details": (
+            "<b>Статус машины</b>\n"
+            "• Пункт пропуска: <b>{}</b>\n"
+            "• Номерной знак: <b><code>{}</code></b>\n"
+            "• Позиция в очереди: <b>{}</b>\n"
+            "• Зарегистрирован: <b>{}</b>\n"
+        ),
+
     }
 }
 

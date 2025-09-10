@@ -156,6 +156,33 @@ def get_queue_length_current(checkpoint_id: str):
     except Exception as e:
         print(f"Error: {e}")
 
+def get_user_cars_current_status(car: str):
+    """Check if 'car' is currently in any queue zones."""
+    buffer_zones = {
+        "benyakoni": "53d94097-2b34-11ec-8467-ac1f6bf889c0",
+        "brest_bts": "a9173a85-3fc0-424c-84f0-defa632481e4",
+        "kamenny_log": "b60677d4-8a00-4f93-a781-e129e1692a03",
+        "grigorovschina": "ffe81c11-00d6-11e8-a967-b0dd44bde851",
+    }
+
+    for buffer_zone_name, checkpointID in buffer_zones.items():
+        url = f"https://belarusborder.by/info/monitoring-new?token=test&checkpointId={checkpointID}"
+        data = fetch_data_from_api(url)
+
+        if not data:
+            continue
+
+        car_live_queue = data.get("carLiveQueue", [])
+        for car_entry in car_live_queue:
+            if car_entry.get("regnum", "").upper() == car.upper():  # case-insensitive check
+                return (
+                    buffer_zone_name,
+                    car_entry["regnum"],
+                    car_entry["order_id"],
+                    car_entry["registration_date"]
+                )
+
+    return None
 
 def set_user_car_into_db(user: User, car: str, lang: str):
     """Set car for 'user' table using SCD2."""

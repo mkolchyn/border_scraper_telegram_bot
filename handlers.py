@@ -21,7 +21,8 @@ from user_utils import (
     send_or_edit_photo, 
     get_queue_length_current,
     set_user_car_into_db,
-    remove_user_car_from_db
+    remove_user_car_from_db,
+    get_user_cars_current_status
 )
 from db_functions import (
     get_queue_speed, 
@@ -133,6 +134,27 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return
 
+    elif data.startswith("track_"):
+        plate = data.replace("track_", "", 1)  # extract the plate number
+        user_id = query.from_user.id
+        car_info = get_user_cars_current_status(plate)
+
+        if car_info:
+            buffer_zone_name, regnum, order_id, registration_date = car_info
+            await query.edit_message_text(
+                CARTRACKING[user_lang]["car_found_in_queue"].format(plate) + "\n" +
+                CARTRACKING[user_lang]["car_status_details"].format(buffer_zone_name.capitalize(), regnum, order_id, registration_date),
+                reply_markup=InlineKeyboardMarkup(build_car_tracking_menu(query, user_lang)),
+                parse_mode="HTML"
+            )
+        else:
+            await query.edit_message_text(
+                CARTRACKING[user_lang]["car_not_found_in_queue"].format(plate),
+                reply_markup=InlineKeyboardMarkup(build_car_tracking_menu(query, user_lang)),
+                parse_mode="HTML"
+            )
+        return
+
     if data in ("benyakoni", "brest_bts", "kamenny_log", "grigorovschina"):
         border_point_id = ESTIMATIONS[user_lang]["border_points_id"][data]
         
@@ -222,7 +244,7 @@ async def handle_plate(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not context.user_data.get("expecting_plate"):
         return  # ignore text not related to add_car flow
 
-    PLATE_PATTERN = re.compile(r'^(?=.*[A-Z])(?=.*\d)[A-Z0-9]{1,7}$')
+    PLATE_PATTERN = re.compile(r'^(?=.*[A-Z])(?=.*\d)[A-Z0-9]{1,10}$')
     plate = update.message.text.strip().upper()
     user_lang = get_user_lang(update.message.from_user.id)
 
