@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 from io import BytesIO
 import math
 
+
 # Load environment variables from .env file
 load_dotenv()
 

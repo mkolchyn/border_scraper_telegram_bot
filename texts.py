@@ -216,6 +216,59 @@ ESTIMATIONS = {
     }   
 }
 
+CARTRACKING = {
+    "en": {
+        "car_tracking_intro": (
+            "<b>Your Saved Cars</b>\n\n"
+            "Here you can find the cars you've saved for tracking.\n"
+            "Select a car to view its tracking information."
+        ),
+        "add_car_prompt": (
+            "<b>Add a Car</b>\n\n"
+            "To add a car for tracking, please send the license plate number in format with letters and numbers only.\n"
+            "Make sure to use uppercase letters and no spaces or special characters."
+        ),
+        "car_added": (
+            "<b>✅ Car Added</b>\n\n"
+            "The car with license plate <code>{}</code> has been added for tracking."
+        ),
+        "car_removed": (
+            "<b>✅ Car Removed</b>\n\n"
+            "The car with license plate <code>{}</code> has been removed from tracking."
+        ),
+        "car_added_error": (
+            "❌ Invalid plate format.\n\n"
+            "Use up to 7 characters, only uppercase letters and numbers, "
+            "with at least one digit (e.g. <b>ABC123</b>)."
+        ),
+    },
+    "ru": {
+        "car_tracking_intro": (
+            "<b>Ваши Сохраненные Машины</b>\n\n"
+            "Здесь вы можете найти машины, которые вы сохранили для отслеживания.\n"
+            "Выберите машину, чтобы просмотреть информацию об отслеживании."
+        ),
+        "add_car_prompt": (
+            "<b>Добавить Машину</b>\n\n"
+            "Чтобы добавить машину для отслеживания, пожалуйста, отправьте номерной знак в формате с буквами и цифрами только.\n"
+            "Убедитесь, что используете заглавные буквы без пробелов и специальных символов."
+        ),
+        "car_added": (
+            "<b>✅ Машина Добавлена</b>\n\n"
+            "Машина с номером <code>{}</code> была добавлена для отслеживания."
+        ),
+        "car_removed": (
+            "<b>✅ Машина Удалена</b>\n\n"
+            "Машина с номером <code>{}</code> была удалена из отслеживания."
+        ),
+        "car_added_error": (
+            "❌ Неверный формат номера.\n\n"
+            "Используйте до 7 символов, только заглавные буквы и цифры, "
+            "с как минимум одной цифрой (например, <b>ABC123</b>)."
+        ),
+    }
+}
+
 # Button labels
 BUTTONS = {
     "en": {
@@ -249,7 +302,10 @@ BUTTONS = {
         "september": "September",
         "october": "October",
         "november": "November",
-        "december": "December"
+        "december": "December",
+        "car_tracking": "Your saved cars",
+        "add_car": "Add a car",
+        "remove_car": "Remove car"
     },
     "ru": {
         "current": "Актуальная информация об очередях",
@@ -282,6 +338,9 @@ BUTTONS = {
         "september": "Сентябрь",
         "october": "Октябрь",
         "november": "Ноябрь",
-        "december": "Декабрь"
+        "december": "Декабрь",
+        "car_tracking": "Ваши сохраненные машины",
+        "add_car": "Добавить машину",
+        "remove_car": "Удалить машину"
     },
 }

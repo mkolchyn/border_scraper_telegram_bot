@@ -155,3 +155,107 @@ def get_queue_length_current(checkpoint_id: str):
         
     except Exception as e:
         print(f"Error: {e}")
+
+
+def set_user_car_into_db(user: User, car: str, lang: str):
+    """Set car for 'user' table using SCD2."""
+    session = SessionLocal()
+    try:
+        db_user = (
+            session.query(DBUser)
+            .filter_by(telegram_id=user.id, is_current=True)
+            .order_by(DBUser.surr_id.desc())
+            .first()
+        )
+
+        if db_user:
+            # Determine which car slot to fill
+            if db_user.car_1 is None:
+                slot = "car_1"
+            elif db_user.car_2 is None:
+                slot = "car_2"
+            elif db_user.car_3 is None:
+                slot = "car_3"
+            else:
+                # All slots full, maybe overwrite car_1 or return
+                slot = None
+
+            if slot:
+                # Close old record
+                db_user.valid_to = datetime.now(timezone.utc)
+                db_user.is_current = False
+
+                # Create new record with updated car
+                new_user = DBUser(
+                    telegram_id=user.id,
+                    username=db_user.username,
+                    first_name=db_user.first_name,
+                    last_name=db_user.last_name,
+                    joined_at=db_user.joined_at,
+                    lang=lang,
+                    car_1=db_user.car_1 if slot != "car_1" else car,
+                    car_2=db_user.car_2 if slot != "car_2" else car,
+                    car_3=db_user.car_3 if slot != "car_3" else car
+                )
+                session.add(new_user)
+        else:
+            # New user, insert record with car_1
+            new_user = DBUser(
+                telegram_id=user.id,
+                username=user.username,
+                first_name=user.first_name,
+                last_name=user.last_name,
+                joined_at=datetime.now(timezone.utc),
+                lang=lang,
+                car_1=car
+            )
+            session.add(new_user)
+
+        session.commit()
+    finally:
+        session.close()
+
+def get_user_cars_from_db(user_id: int):
+    """Fetch all cars for a user using ORM (may include None)."""
+    session: Session = SessionLocal()
+    try:
+        db_user = (
+            session.query(DBUser)
+            .filter(DBUser.telegram_id == user_id, DBUser.is_current == True)
+            .order_by(DBUser.surr_id.desc())
+            .first()
+        )
+        if db_user:
+            return [db_user.car_1, db_user.car_2, db_user.car_3]
+        return []
+    finally:
+        session.close()
+
+def remove_user_car_from_db(user_id: int, car: str):
+    """Remove a specific car from user's tracked cars using SCD2."""
+    session = SessionLocal()
+    try:
+        db_user = session.query(DBUser)\
+            .filter_by(telegram_id=user_id, is_current=True).first()
+
+        if db_user and car in (db_user.car_1, db_user.car_2, db_user.car_3):
+            # Close old record
+            db_user.valid_to = datetime.now(timezone.utc)
+            db_user.is_current = False
+
+            # Create new record without the specified car
+            new_user = DBUser(
+                telegram_id=db_user.telegram_id,
+                username=db_user.username,
+                first_name=db_user.first_name,
+                last_name=db_user.last_name,
+                joined_at=db_user.joined_at,
+                lang=db_user.lang,
+                car_1=db_user.car_1 if db_user.car_1 != car else None,
+                car_2=db_user.car_2 if db_user.car_2 != car else None,
+                car_3=db_user.car_3 if db_user.car_3 != car else None
+            )
+            session.add(new_user)
+            session.commit()
+    finally:
+        session.close()

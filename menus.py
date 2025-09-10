@@ -1,11 +1,13 @@
 from telegram import InlineKeyboardButton
 from texts import BUTTONS
+from user_utils import get_user_cars_from_db
 
 def build_main_menu(lang: str):
     return [
         [InlineKeyboardButton(BUTTONS[lang]["current"], callback_data="current")],
         [InlineKeyboardButton(BUTTONS[lang]["stats"], callback_data="stats")],
-        [InlineKeyboardButton(BUTTONS[lang]["estimations"], callback_data="estimations")]
+        [InlineKeyboardButton(BUTTONS[lang]["estimations"], callback_data="estimations")],
+        [InlineKeyboardButton(BUTTONS[lang]["car_tracking"], callback_data="car_tracking")],
     ]
 
 def build_current_menu(lang: str):
@@ -85,6 +87,29 @@ def build_month_menu(country: str, year: str, lang: str):
                 )
             )
         keyboard.append(row)
+
+    keyboard.append([InlineKeyboardButton(BUTTONS[lang]["menu"], callback_data="menu")])
+    return keyboard
+
+def build_car_tracking_menu_only(lang: str):
+    return [
+        [InlineKeyboardButton(BUTTONS[lang]["car_tracking"], callback_data="car_tracking")]
+    ]
+
+def build_car_tracking_menu(query, lang: str):
+    user_id = query.from_user.id
+    cars = get_user_cars_from_db(user_id)
+
+    keyboard = []
+    for car in cars:
+        # Create a button for each car
+        if car:
+            keyboard.append(
+                [InlineKeyboardButton(car, callback_data=f"track_{car}"),
+                 InlineKeyboardButton(BUTTONS[lang]["remove_car"], callback_data=f"remove_{car}")]
+            )
+        else:
+            keyboard.append([InlineKeyboardButton(BUTTONS[lang]["add_car"], callback_data="add_car")])
 
     keyboard.append([InlineKeyboardButton(BUTTONS[lang]["menu"], callback_data="menu")])
     return keyboard
