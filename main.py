@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler
-from handlers import start, restart, button_handler
+from handlers import start, restart, menu, button_handler
 
 load_dotenv()
 
@@ -13,6 +13,7 @@ def main():
     app = ApplicationBuilder().token(TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("restart", restart))
+    app.add_handler(CommandHandler("menu", menu))
     app.add_handler(CallbackQueryHandler(button_handler))
     app.run_polling()
 
