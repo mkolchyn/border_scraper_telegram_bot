@@ -224,8 +224,15 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         checkpoint_id, border_points_names = CALLBACK_MAP_CURRENT[data]
         countCar, countTruck, countBus, countMotorcycle = get_queue_length_current(checkpoint_id)
 
-        message = ESTIMATIONS[user_lang]["border_points_names"][border_points_names] + "\n\n"
-        message += f"🚗 {countCar}    🚚 {countTruck}    🚌 {countBus}    🏍️ {countMotorcycle}\n\n"
+        if border_points_names in ("benyakoni", "kamenny_log", "grigorovschina"):
+            message = ESTIMATIONS[user_lang]["border_points_names"][border_points_names] + "\n\n"
+            message += f"🚗 {countCar}    🚚 {countTruck}    🚌 {countBus}    🏍️ {countMotorcycle}\n\n"
+        elif border_points_names in ("brest_bts"):
+            message = ESTIMATIONS[user_lang]["border_points_names"][border_points_names] + "\n\n"
+            message += f"🚗 {countCar}    🚌 {countBus}    🏍️ {countMotorcycle}\n\n"
+        elif border_points_names in ("kozlovichi"):
+            message = ESTIMATIONS[user_lang]["border_points_names"][border_points_names] + "\n\n"
+            message += f"🚚 {countTruck}"
 
         await query.edit_message_text(
             message,
