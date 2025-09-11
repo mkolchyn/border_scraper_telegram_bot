@@ -12,7 +12,12 @@ from menus import (
     build_country_menu, 
     build_estimations_menu, 
     build_month_menu, 
-    build_year_menu
+    build_year_menu,
+    build_car_settings_menu,
+    build_notification_type_menu,
+    build_notification_number_in_queue_menu,
+    build_notification_every_n_minutes_menu,
+    build_notification_every_n_cars_menu
 )
 from user_utils import (
     log_user_action, 
@@ -22,7 +27,13 @@ from user_utils import (
     get_queue_length_current,
     set_user_car_into_db,
     remove_user_car_from_db,
-    get_user_cars_current_status
+    get_user_cars_current_status,
+    set_user_car_notification_in_db,
+    get_user_car_notifications_from_db,
+    remove_user_car_notification_from_db,
+    deactivate_user_car_notification_in_db,
+    activate_user_car_notification_in_db
+
 )
 from db_functions import (
     get_queue_speed, 
@@ -80,7 +91,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return
 
-    if data == "current":
+    elif data == "current":
         await query.edit_message_text(
             CURRENT[user_lang]["current_info"],
             reply_markup=InlineKeyboardMarkup(build_current_menu(user_lang)),
@@ -89,7 +100,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return
 
-    if data == "stats":
+    elif data == "stats":
         await query.edit_message_text(
             STATS[user_lang]["welcome"],
             reply_markup=InlineKeyboardMarkup(build_stats_menu(user_lang)),
@@ -98,14 +109,14 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return
 
-    if data == "estimations":
+    elif data == "estimations":
         await query.edit_message_text(
             ESTIMATIONS[user_lang]["choose_border_point"],
             reply_markup=InlineKeyboardMarkup(build_estimations_menu(user_lang))
         )
         return
 
-    if data == "car_tracking":
+    elif data == "car_tracking":
         await query.edit_message_text(
             CARTRACKING[user_lang]["car_tracking_intro"],
             reply_markup=InlineKeyboardMarkup(build_car_tracking_menu(query,user_lang)),
@@ -123,8 +134,9 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         context.user_data["expecting_plate"] = True
         return
     
-    elif data.startswith("remove_"):
-        plate = data.replace("remove_", "", 1)  # extract the plate number
+    elif data.startswith("remove_car"):
+        parts = data.split("_", 2)
+        plate = parts[2]  # extract the plate number
         user_id = query.from_user.id
         remove_user_car_from_db(user_id, plate)
         await query.edit_message_text(
@@ -155,7 +167,96 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
         return
 
-    if data in ("benyakoni", "brest_bts", "kamenny_log", "grigorovschina"):
+    elif data.startswith("settings_"):
+        plate = data.replace("settings_", "", 1)  # extract the plate number
+        user_id = query.from_user.id
+
+        await query.edit_message_text(
+            CARTRACKING[user_lang]["car_notification_settings"].format(plate),
+            reply_markup=InlineKeyboardMarkup(build_car_settings_menu(user_id, plate, user_lang)),
+            parse_mode="HTML"
+        )
+
+    elif data.startswith("add_notification_"):
+        parts = data.split("_", 3)
+        car_plate = parts[2]
+        user_id = query.from_user.id
+
+        await query.edit_message_text(
+            CARTRACKING[user_lang]["add_notification_type"].format(car_plate),
+            reply_markup=InlineKeyboardMarkup(build_notification_type_menu(car_plate, user_lang)),
+            parse_mode="HTML"
+        )
+
+    elif data.startswith("set_notification_type_"):
+        parts = data.split("_")
+        car_plate = parts[3]
+        notification_type = parts[4]
+
+        if notification_type == "number-in-queue":
+            await query.edit_message_text(
+                CARTRACKING[user_lang]["set_notification_value_number_in_queue"],
+                reply_markup=InlineKeyboardMarkup(build_notification_number_in_queue_menu(car_plate, user_lang)),
+                parse_mode="HTML"
+            )
+        elif notification_type == "every-n-minutes":
+            await query.edit_message_text(
+                CARTRACKING[user_lang]["set_notification_value_every_n_minutes"],
+                reply_markup=InlineKeyboardMarkup(build_notification_every_n_minutes_menu(car_plate, user_lang)),
+                parse_mode="HTML"
+            )
+        elif notification_type == "every-n-cars":
+            await query.edit_message_text(
+                CARTRACKING[user_lang]["set_notification_value_every_n_cars"],
+                reply_markup=InlineKeyboardMarkup(build_notification_every_n_cars_menu(car_plate, user_lang)),
+                parse_mode="HTML"
+            )
+
+    elif data.startswith("set_notification_value_"):
+        parts = data.split("_")
+        car_plate = parts[3]
+        notification_type = parts[4]
+        notification_value = parts[5]
+        user_id = query.from_user.id
+    
+        set_user_car_notification_in_db(user_id, car_plate, notification_type, notification_value)
+
+        await query.edit_message_text(
+            CARTRACKING[user_lang]["notification_added"].format(car_plate),
+            reply_markup=InlineKeyboardMarkup(build_car_settings_menu(user_id, car_plate, user_lang)),
+            parse_mode="HTML"
+        )
+
+
+    elif data.startswith("remove_notification_"):
+        parts = data.split("_", 3)
+        notification_surr_id = parts[2] # exctract notification id
+        car_plate = parts[3]  # extract the plate number
+        remove_user_car_notification_from_db(notification_surr_id)
+        await query.edit_message_text(
+            CARTRACKING[user_lang]["notification_removed"].format(car_plate),
+            reply_markup=InlineKeyboardMarkup(build_car_settings_menu(query.from_user.id, car_plate, user_lang)),
+            parse_mode="HTML"
+        )
+        return
+
+    elif data.startswith("enable_") or data.startswith("disable_"):
+        action, notification_surr_id, car_plate = data.split("_", 2)
+        if action == "enable":
+            activate_user_car_notification_in_db(notification_surr_id)
+            message = CARTRACKING[user_lang]["notification_status_enabled"]
+        else:
+            deactivate_user_car_notification_in_db(notification_surr_id)
+            message = CARTRACKING[user_lang]["notification_status_disabled"]
+
+        await query.edit_message_text(
+            message,
+            reply_markup=InlineKeyboardMarkup(build_car_settings_menu(query.from_user.id, car_plate, user_lang)),
+            parse_mode="HTML"
+        )
+        return
+
+    elif data in ("benyakoni", "brest_bts", "kamenny_log", "grigorovschina"):
         border_point_id = ESTIMATIONS[user_lang]["border_points_id"][data]
         
         # Fetch the latest queue speed data from the remote DB
@@ -241,11 +342,13 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return
 
+    elif data == "noop":
+        await query.answer()  # silently ignore
+
     elif data == "exit":
         await query.edit_message_text(STATS[user_lang]["goodbye"])
     else:
         await query.edit_message_text(f"You selected: {data.capitalize()}")
-
 
 async def handle_plate(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not context.user_data.get("expecting_plate"):

@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func
 from datetime import datetime
 from db_functions import SessionLocal
-from models import DBUser, UserAction
+from models import DBUser, UserAction, UserNotification
 from datetime import datetime, timezone
 import time
 import httpx
@@ -284,5 +284,89 @@ def remove_user_car_from_db(user_id: int, car: str):
             )
             session.add(new_user)
             session.commit()
+    finally:
+        session.close()
+
+def set_user_car_notification_in_db(user_id: int, car: str, notification_type: str, notification_value: int):
+    """Set a notification for a user's car."""
+    session = SessionLocal()
+    try:
+        db_user = session.query(DBUser)\
+            .filter_by(telegram_id=user_id, is_current=True).first()
+
+        if db_user and car in (db_user.car_1, db_user.car_2, db_user.car_3):
+            new_notification = UserNotification(
+                telegram_id=user_id,
+                car_plate=car,
+                notification_type=notification_type,
+                notification_value=notification_value
+            )
+            session.add(new_notification)
+        else:
+            print(f"[WARN] User {user_id} does not track car {car}, cannot set notification.")
+
+        session.commit()
+        
+    finally:
+        session.close()
+
+def get_user_car_notifications_from_db(user_id: int, car: str):
+    """Fetch all active notifications for a user's specific car."""
+    session = SessionLocal()
+    try:
+        notifications = session.query(UserNotification)\
+            .filter_by(telegram_id=user_id, car_plate=car).all()
+        return notifications
+    finally:
+        session.close()
+
+def remove_user_car_notification_from_db(surr_id: int):
+    """Remove a specific notification for a user's car."""
+    session = SessionLocal()
+    try:
+        notification = session.query(UserNotification)\
+            .filter_by(surr_id=surr_id)\
+            .first()
+
+        if notification:
+            session.delete(notification)
+            session.commit()
+        else:
+            print(f"[WARN] No active notification found for surr_id {surr_id}.")
+
+    finally:
+        session.close()
+
+def deactivate_user_car_notification_in_db(surr_id: int):
+    """Deactivate (set status to False) a specific notification for a user's car."""
+    session = SessionLocal()
+    try:
+        notification = session.query(UserNotification)\
+            .filter_by(surr_id=surr_id, notification_status=True)\
+            .first()
+
+        if notification:
+            notification.notification_status = False
+            session.commit()
+        else:
+            print(f"[WARN] No active notification found for surr_id {surr_id}.")
+
+    finally:
+        session.close()
+
+def activate_user_car_notification_in_db(surr_id: int):
+    """Activate (set status to True) a specific notification for a user's car."""
+    session = SessionLocal()
+    try:
+        notification = session.query(UserNotification)\
+            .filter_by(surr_id=surr_id, notification_status=False)\
+            .first()
+
+        if notification:
+            notification.notification_status = True
+            session.commit()
+        else:
+            print(f"[WARN] No inactive notification found for surr_id {surr_id}.")
+
     finally:
         session.close()

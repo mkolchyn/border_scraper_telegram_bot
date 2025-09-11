@@ -243,37 +243,61 @@ CARTRACKING = {
         ),
         "car_found_in_queue": (
             "<b>Car Found in Queue!</b>\n\n"
-            "The car with license plate <code>{}</code> is currently in the queue.\n"
+            "The car with license plate <b>{}</b> is currently in the queue.\n"
         ),
         "car_not_found_in_queue": (
             "<b>Car Not Found in Queue</b>\n\n"
-            "The car with license plate <code>{}</code> is not currently in any queue."
+            "The car with license plate <b>{}</b> is not currently in any queue."
         ),
         "car_status_details": (
             "<b>Car Status Details</b>\n"
             "• Checkpoint: <b>{}</b>\n"
-            "• License Plate: <b><code>{}</code></b>\n"
+            "• License Plate: <b>{}</b>\n"
             "• Position in Queue: <b>{}</b>\n"
             "• Registered: <b>{}</b>\n"
+        ),
+        "car_notification_settings": (
+            "<b>Notification settings for car <code>{}</code></b>\n\n"
+            "Here you can manage notifications for this car.\n\n"
+            "• To add a notification, click 'Add notification'.\n"
+            "• To remove a notification, click 'Remove' next to the desired notification.\n"
+            "• You can enable or disable notifications as needed."
+        ),
+        "notification_status_enabled": "Notification has been enabled.",
+        "notification_status_disabled": "Notification has been disabled.",
+        "notification_removed":"Notification has been removed",
+        "add_notification_type": (
+            "<b>Select notification type for car <code>{}</code></b>\n\n"
+            "Choose the type of notification you want to set for this car:\n"
+            "• Position in queue (e.g., notify when position = N)\n"
+            "• Time interval (e.g., notify every N minutes)\n"
+            "• Number of cars passed (e.g., notify every N cars)"
+        ),
+        "set_notification_value_number_in_queue": "Select value for notification type <b>Position in queue</b>",
+        "set_notification_value_every_n_minutes": "Select value for notification type <b>Every N minutes</b>",
+        "set_notification_value_every_n_cars": "Select value for notification type <b>Every N cars</b>",
+        "notification_added": (
+            "<b>✅ Notification Added</b>\n\n"
+            "A new notification has been added for car <code>{}</code>"
         ),
     },
     "ru": {
         "car_tracking_intro": (
-            "<b>Ваши Сохраненные Машины</b>\n\n"
+            "<b>Ваши сохраненные машины</b>\n\n"
             "Здесь вы можете найти машины, которые вы сохранили для отслеживания.\n"
             "Выберите машину, чтобы просмотреть информацию об отслеживании."
         ),
         "add_car_prompt": (
-            "<b>Добавить Машину</b>\n\n"
+            "<b>Добавить машину</b>\n\n"
             "Чтобы добавить машину для отслеживания, пожалуйста, отправьте номерной знак в формате с буквами и цифрами только.\n"
             "Убедитесь, что используете заглавные буквы без пробелов и специальных символов."
         ),
         "car_added": (
-            "<b>✅ Машина Добавлена</b>\n\n"
+            "<b>✅ Машина добавлена</b>\n\n"
             "Машина с номером <code>{}</code> была добавлена для отслеживания."
         ),
         "car_removed": (
-            "<b>✅ Машина Удалена</b>\n\n"
+            "<b>✅ Машина удалена</b>\n\n"
             "Машина с номером <code>{}</code> была удалена из отслеживания."
         ),
         "car_added_error": (
@@ -283,28 +307,50 @@ CARTRACKING = {
         ),
         "car_found_in_queue": (
             "<b>Машина найдена в очереди!</b>\n\n"
-            "Машина с номером <code>{}</code> в данный момент находится в очереди.\n"
+            "Машина с номером <b>{}</b> в данный момент находится в очереди.\n"
         ),
         "car_not_found_in_queue": (
             "<b>Машина не найдена в очереди</b>\n\n"
-            "Машина с номером <code>{}</code> в данный момент не находится в какой-либо очереди."
+            "Машина с номером <b>{}</b> в данный момент не находится в какой-либо очереди."
         ),
         "car_status_details": (
             "<b>Статус машины</b>\n"
             "• Пункт пропуска: <b>{}</b>\n"
-            "• Номерной знак: <b><code>{}</code></b>\n"
+            "• Номерной знак: <b>{}</b>\n"
             "• Позиция в очереди: <b>{}</b>\n"
             "• Зарегистрирован: <b>{}</b>\n"
         ),
-
+        "car_notification_settings": (
+            "<b>Настройки уведомлений для машины <code>{}</code></b>\n\n"
+            "Здесь вы можете управлять уведомлениями для этой машины.\n\n"
+            "• Чтобы добавить уведомление, нажмите 'Добавить уведомление'.\n"
+            "• Чтобы удалить уведомление, нажмите 'Удалить' рядом с нужным уведомлением.\n"
+            "• Вы можете включать или отключать уведомления по необходимости."
+        ),
+        "notification_status_enabled": "Уведомление было включено.",
+        "notification_status_disabled": "Уведомление было отключено.",
+        "notification_removed": "Уведомление было удалено",
+        "add_notification_type": (
+            "<b>Выберите тип уведомления для машины <code>{}</code></b>:\n\n"
+            "• Позиция в очереди (например, уведомлять, когда позиция = N)\n"
+            "• Интервал времени (например, уведомлять каждые N минут)\n"
+            "• Количество прошедших машин (например, уведомлять каждые N машин)"
+        ),
+        "set_notification_value_number_in_queue": "Выберите значение для типа уведомления <b>Позиция в очереди</b>",
+        "set_notification_value_every_n_minutes": "Выберите значение для типа уведомления <b>Каждые N минут</b>",
+        "set_notification_value_every_n_cars": "Выберите значение для типа уведомления <b>Каждые N машин</b>",
+        "notification_added": (
+            "<b>✅ Уведомление добавлено</b>\n\n"
+            "Новое уведомление было добавлено для машины <code>{}</code>"
+        ),
     }
 }
 
 # Button labels
 BUTTONS = {
     "en": {
-        "current": "Current Queue Info",
-        "stats":"Show border statistics",
+        "current": "Current queue info",
+        "stats":"Historical queue data",
         "estimations": "Estimate border speed",
         "country_lt": "Lithuania 🇱🇹",
         "country_lv": "Latvia 🇱🇻",
@@ -334,13 +380,25 @@ BUTTONS = {
         "october": "October",
         "november": "November",
         "december": "December",
-        "car_tracking": "Your saved cars",
+        "car_tracking": "Track your saved cars",
         "add_car": "Add a car",
-        "remove_car": "Remove car"
+        "remove_car": "Remove",
+        "settings_car": "Settings",
+        "add_notification": "Add notification",
+        "remove_notification": "Remove",
+        "disable_notification": "Disable",
+        "enable_notification": "Enable",
+        "notification_type_number_in_queue": "position {}",
+        "notification_type_every_n_minutes": "every {} min",
+        "notification_type_every_n_cars": "every {} cars",
+        "set_notification_type_number_in_queue": "Position in queue",
+        "set_notification_type_every_n_minutes": "Every N minutes",
+        "set_notification_type_every_n_cars": "Every N cars",
+        "selected_car_settings": "🔙 Selected car settings"
     },
     "ru": {
         "current": "Актуальная информация об очередях",
-        "stats":"Показать статистику по границе",
+        "stats":"Показать исторические данные по очередям",
         "estimations": "Оценить скорость прохождения границы",
         "country_lt": "Литва 🇱🇹",
         "country_lv": "Латвия 🇱🇻",
@@ -370,8 +428,20 @@ BUTTONS = {
         "october": "Октябрь",
         "november": "Ноябрь",
         "december": "Декабрь",
-        "car_tracking": "Ваши сохраненные машины",
+        "car_tracking": "Отслеживание ваших сохраненных машин",
         "add_car": "Добавить машину",
-        "remove_car": "Удалить машину"
-    },
+        "remove_car": "Удалить",
+        "settings_car": "Настройки",
+        "add_notification": "Добавить уведомление",
+        "remove_notification": "Удалить",
+        "disable_notification": "Отключить",
+        "enable_notification": "Включить",
+        "notification_type_number_in_queue": "позиция {}",
+        "notification_type_every_n_minutes": "каждые {} мин",
+        "notification_type_every_n_cars": "каждые {} машин",
+        "set_notification_type_number_in_queue": "Позиция в очереди",
+        "set_notification_type_every_n_minutes": "Каждые N минут",
+        "set_notification_type_every_n_cars": "Каждые N машин",
+        "selected_car_settings": "🔙 Настройки выбранной машины"
+    }
 }
