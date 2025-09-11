@@ -126,10 +126,10 @@ def build_car_settings_menu(user_id, car: str, lang: str):
     if notifications:
         for notification in notifications:
             if notification.notification_status:
-                status = BUTTONS[lang]["disable_notification"]
+                status = "🔔"
                 command = "disable"
             else:
-                status = BUTTONS[lang]["enable_notification"]
+                status = "🔕"
                 command = "enable"
 
             if notification.notification_type == "number-in-queue":
@@ -140,16 +140,18 @@ def build_car_settings_menu(user_id, car: str, lang: str):
                 button_name = BUTTONS[lang]["notification_type_every_n_cars"].format(notification.notification_value)
 
             keyboard.append(
-                [InlineKeyboardButton(button_name, callback_data="noop"),
-                InlineKeyboardButton(status, callback_data=command + f"_{notification.surr_id}_{notification.car_plate}"),
+                [InlineKeyboardButton(button_name + status, callback_data=command + f"_{notification.surr_id}_{notification.car_plate}"),
                 InlineKeyboardButton(BUTTONS[lang]["remove_notification"], callback_data=f"remove_notification_{notification.surr_id}_{notification.car_plate}")]
             )
-        if len(notifications) < 6:
+        if len(notifications) < 5:
             keyboard.append([InlineKeyboardButton(BUTTONS[lang]["add_notification"], callback_data=f"add_notification_{car}")])
+            keyboard.append([InlineKeyboardButton(BUTTONS[lang]["car_tracking"], callback_data="car_tracking")])
     else:
         keyboard.append([InlineKeyboardButton(BUTTONS[lang]["add_notification"], callback_data=f"add_notification_{car}")])
+        keyboard.append([InlineKeyboardButton(BUTTONS[lang]["car_tracking"], callback_data="car_tracking")])
 
     keyboard.append([InlineKeyboardButton(BUTTONS[lang]["menu"], callback_data="menu")])
+    
     return keyboard
 
 def build_notification_type_menu(plate: str, lang: str):
