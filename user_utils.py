@@ -3,7 +3,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from datetime import datetime
-from db_functions import SessionLocal
+from db_functions import get_local_session
 from models import DBUser, UserAction, UserNotification
 from datetime import datetime, timezone
 import time
@@ -41,7 +41,7 @@ async def send_or_edit_photo(query, path_prefix, file_suffix, caption, keyboard,
 
 def log_user_action(user: User, action: str):
     """Log a user action into Postgres."""
-    session: Session = SessionLocal()
+    session: Session = get_local_session()
     try:
         # Get current version of user
         db_user = session.query(DBUser)\
@@ -76,7 +76,7 @@ def log_user_action(user: User, action: str):
 
 def get_user_lang(user_id: int) -> str:
     """Return the latest language for the user, default 'en'."""
-    session: Session = SessionLocal()
+    session: Session = get_local_session()
     try:
         db_user = session.query(DBUser)\
             .filter_by(telegram_id=user_id, is_current=True)\
@@ -88,7 +88,7 @@ def get_user_lang(user_id: int) -> str:
 
 def set_user_lang(user: User, lang: str):
     """Set or update language preference for user using SCD2."""
-    session: Session = SessionLocal()
+    session: Session = get_local_session()
     try:
         db_user = session.query(DBUser)\
             .filter_by(telegram_id=user.id, is_current=True)\
@@ -187,7 +187,7 @@ def get_user_cars_current_status(car: str):
 
 def set_user_car_into_db(user: User, car: str, lang: str):
     """Set car for 'user' table using SCD2."""
-    session = SessionLocal()
+    session = get_local_session()
     try:
         db_user = (
             session.query(DBUser)
@@ -245,7 +245,7 @@ def set_user_car_into_db(user: User, car: str, lang: str):
 
 def get_user_cars_from_db(user_id: int):
     """Fetch all cars for a user using ORM (may include None)."""
-    session: Session = SessionLocal()
+    session: Session = get_local_session()
     try:
         db_user = (
             session.query(DBUser)
@@ -261,7 +261,7 @@ def get_user_cars_from_db(user_id: int):
 
 def remove_user_car_from_db(user_id: int, car: str):
     """Remove a specific car from user's tracked cars using SCD2."""
-    session = SessionLocal()
+    session = get_local_session()
     try:
         db_user = session.query(DBUser)\
             .filter_by(telegram_id=user_id, is_current=True).first()
@@ -290,7 +290,7 @@ def remove_user_car_from_db(user_id: int, car: str):
 
 def set_user_car_notification_in_db(user_id: int, car: str, notification_type: str, notification_value: int):
     """Set a notification for a user's car."""
-    session = SessionLocal()
+    session = get_local_session()
     try:
         db_user = session.query(DBUser)\
             .filter_by(telegram_id=user_id, is_current=True).first()
@@ -313,7 +313,7 @@ def set_user_car_notification_in_db(user_id: int, car: str, notification_type: s
 
 def get_user_car_notifications_from_db(user_id: int, car: str):
     """Fetch all active notifications for a user's specific car."""
-    session = SessionLocal()
+    session = get_local_session()
     try:
         notifications = session.query(UserNotification)\
             .filter_by(telegram_id=user_id, car_plate=car).all()
@@ -323,7 +323,7 @@ def get_user_car_notifications_from_db(user_id: int, car: str):
 
 def remove_user_car_notification_from_db(surr_id: int):
     """Remove a specific notification for a user's car."""
-    session = SessionLocal()
+    session = get_local_session()
     try:
         notification = session.query(UserNotification)\
             .filter_by(surr_id=surr_id)\
@@ -340,7 +340,7 @@ def remove_user_car_notification_from_db(surr_id: int):
 
 def deactivate_user_car_notification_in_db(surr_id: int):
     """Deactivate (set status to False) a specific notification for a user's car."""
-    session = SessionLocal()
+    session = get_local_session()
     try:
         notification = session.query(UserNotification)\
             .filter_by(surr_id=surr_id, notification_status=True)\
@@ -363,7 +363,7 @@ def activate_user_car_notification_in_db(surr_id: int, car: str):
     if not current_status:
         return False
 
-    session = SessionLocal()
+    session = get_local_session()
     try:
         notification = session.query(UserNotification)\
             .filter_by(surr_id=surr_id, notification_status=False)\

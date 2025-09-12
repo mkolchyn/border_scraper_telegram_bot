@@ -6,7 +6,7 @@ from user_utils import (
 )
 import os
 from dotenv import load_dotenv
-from db_functions import SessionLocal
+from db_functions import get_local_session
 from models import UserNotification
 from texts import CARTRACKING
 
@@ -26,7 +26,7 @@ def send_telegram_message(message, chat_id):
 def track_user_car(surr_id: int, lang: str):
     """Helper function to track a car and send notification to user."""
 
-    session = SessionLocal()
+    session = get_local_session()
     try:
         notification = session.query(UserNotification).filter(UserNotification.surr_id == surr_id).first()
         if not notification:
