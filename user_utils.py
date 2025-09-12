@@ -179,7 +179,8 @@ def get_user_cars_current_status(car: str):
                     buffer_zone_name,
                     car_entry["regnum"],
                     car_entry["order_id"],
-                    car_entry["registration_date"]
+                    car_entry["registration_date"],
+                    car_entry["status"]
                 )
 
     return None
@@ -354,8 +355,14 @@ def deactivate_user_car_notification_in_db(surr_id: int):
     finally:
         session.close()
 
-def activate_user_car_notification_in_db(surr_id: int):
+def activate_user_car_notification_in_db(surr_id: int, car: str):
     """Activate (set status to True) a specific notification for a user's car."""
+    """Also checks if the car is currently in any queue."""
+
+    current_status = get_user_cars_current_status(car)
+    if not current_status:
+        return False
+
     session = SessionLocal()
     try:
         notification = session.query(UserNotification)\
@@ -365,8 +372,10 @@ def activate_user_car_notification_in_db(surr_id: int):
         if notification:
             notification.notification_status = True
             session.commit()
+            return True
         else:
             print(f"[WARN] No inactive notification found for surr_id {surr_id}.")
+            return False
 
     finally:
         session.close()

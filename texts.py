@@ -265,6 +265,7 @@ CARTRACKING = {
         ),
         "notification_status_enabled": "Notification has been enabled.",
         "notification_status_disabled": "Notification has been disabled.",
+        "notification_activation_failed": "Failed to activate notification. Most probably the car is not in the queue.",
         "notification_removed":"Notification has been removed",
         "add_notification_type": (
             "<b>Select notification type for car <code>{}</code></b>\n\n"
@@ -278,8 +279,14 @@ CARTRACKING = {
         "set_notification_value_every_n_cars": "Select value for notification type <b>Every N cars</b>",
         "notification_added": (
             "<b>✅ Notification Added</b>\n\n"
-            "A new notification has been added for car <code>{}</code>"
+            "A new notification has been added for car <code>{}</code>.\n"
+            "Check the bell icon next to each notification. Tap it to enable or disable the notification."
         ),
+        "no_notification_found": "No notification found with surr_id {}.",
+        "car_reached_position": "Your car {} has reached position {} in the queue ({}).",
+        "car_summoned": "Your car {} is currently summoned to the border checkpoint.",
+        "car_no_longer_in_queue": "Your car {} is no longer in any queue.",
+        "car_moved_forward": "Your car {} has moved forward by {} positions and is now at position {} in the queue ({})."
     },
     "ru": {
         "car_tracking_intro": (
@@ -329,6 +336,7 @@ CARTRACKING = {
         ),
         "notification_status_enabled": "Уведомление было включено.",
         "notification_status_disabled": "Уведомление было отключено.",
+        "notification_activation_failed": "Не удалось активировать уведомление. Скорее всего, машина не в очереди.",
         "notification_removed": "Уведомление было удалено",
         "add_notification_type": (
             "<b>Выберите тип уведомления для машины <code>{}</code></b>:\n\n"
@@ -341,8 +349,14 @@ CARTRACKING = {
         "set_notification_value_every_n_cars": "Выберите значение для типа уведомления <b>Каждые N машин</b>",
         "notification_added": (
             "<b>✅ Уведомление добавлено</b>\n\n"
-            "Новое уведомление было добавлено для машины <code>{}</code>"
+            "Новое уведомление было добавлено для машины <code>{}</code>.\n"
+            "Проверьте иконку колокольчика рядом с каждым уведомлением. Нажмите на неё, чтобы включить или отключить уведомление."
         ),
+        "no_notification_found": "Уведомление не найдено с surr_id {}.",
+        "car_reached_position": "Ваш автомобиль {} достиг позиции {} в очереди ({}).",
+        "car_summoned": "Ваш автомобиль {} в настоящее время вызван на пограничный контроль.",
+        "car_no_longer_in_queue": "Ваш автомобиль {} больше не находится в очереди.",
+        "car_moved_forward": "Ваш автомобиль {} продвинулся на {} позиций и теперь находится на позиции {} в очереди ({})."
     }
 }
 

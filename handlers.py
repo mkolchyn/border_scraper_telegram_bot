@@ -1,8 +1,10 @@
 import re
+from multiprocessing import Process
 from telegram import InlineKeyboardMarkup, InputMediaPhoto, Update
 from telegram.constants import ParseMode
 from telegram.ext import ContextTypes
 from texts import MAIN_MENU, STATS, CURRENT, ESTIMATIONS, CARTRACKING, language_menu
+from tracking_car import track_user_car
 from menus import (
     build_car_tracking_menu_only,  
     build_main_menu, 
@@ -152,7 +154,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         car_info = get_user_cars_current_status(plate)
 
         if car_info:
-            buffer_zone_name, regnum, order_id, registration_date = car_info
+            buffer_zone_name, regnum, order_id, registration_date, status = car_info
             await query.edit_message_text(
                 CARTRACKING[user_lang]["car_found_in_queue"].format(plate) + "\n" +
                 CARTRACKING[user_lang]["car_status_details"].format(buffer_zone_name.capitalize(), regnum, order_id, registration_date),
@@ -243,8 +245,12 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif data.startswith("enable_") or data.startswith("disable_"):
         action, notification_surr_id, car_plate = data.split("_", 2)
         if action == "enable":
-            activate_user_car_notification_in_db(notification_surr_id)
-            message = CARTRACKING[user_lang]["notification_status_enabled"]
+            if activate_user_car_notification_in_db(notification_surr_id, car_plate):
+                p = Process(target=track_user_car, args=(notification_surr_id, user_lang))
+                p.start()
+                message = CARTRACKING[user_lang]["notification_status_enabled"]
+            else:
+                message = CARTRACKING[user_lang]["notification_activation_failed"]
         else:
             deactivate_user_car_notification_in_db(notification_surr_id)
             message = CARTRACKING[user_lang]["notification_status_disabled"]

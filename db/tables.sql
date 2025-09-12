@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS user_notification (
     car_plate VARCHAR(20) NOT NULL,
     notification_type VARCHAR(50) NOT NULL,
     notification_value VARCHAR(100),
-    notification_status BOOLEAN NOT NULL DEFAULT TRUE,
+    notification_status BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     changed_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
