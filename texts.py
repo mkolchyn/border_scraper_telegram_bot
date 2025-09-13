@@ -257,11 +257,7 @@ CARTRACKING = {
             "• Registered: <b>{}</b>\n"
         ),
         "car_notification_settings": (
-            "<b>Notification settings for car <code>{}</code></b>\n\n"
-            "Here you can manage notifications for this car.\n\n"
-            "• To add a notification, click 'Add notification'.\n"
-            "• To remove a notification, click 'Remove' next to the desired notification.\n"
-            "• You can enable or disable notifications as needed."
+            "<b>Notification settings for car <code>{}</code></b>"
         ),
         "notification_status_enabled": "Notification has been enabled.",
         "notification_status_disabled": "Notification has been disabled.",
@@ -270,9 +266,9 @@ CARTRACKING = {
         "add_notification_type": (
             "<b>Select notification type for car <code>{}</code></b>\n\n"
             "Choose the type of notification you want to set for this car:\n"
-            "• Position in queue (e.g., notify when position = N)\n"
-            "• Time interval (e.g., notify every N minutes)\n"
-            "• Number of cars passed (e.g., notify every N cars)"
+            "• Position in queue (e.g., notify when position = 'N')\n"
+            "• Time interval (e.g., notify every 'N' minutes)\n"
+            "• Number of cars passed (e.g., notify every 'N' cars)"
         ),
         "set_notification_value_number_in_queue": "Select value for notification type <b>Position in queue</b>",
         "set_notification_value_every_n_minutes": "Select value for notification type <b>Every 'N' minutes</b>",
@@ -342,11 +338,7 @@ CARTRACKING = {
             "• Зарегистрирован: <b>{}</b>\n"
         ),
         "car_notification_settings": (
-            "<b>Настройки уведомлений для машины <code>{}</code></b>\n\n"
-            "Здесь вы можете управлять уведомлениями для этой машины.\n\n"
-            "• Чтобы добавить уведомление, нажмите 'Добавить уведомление'.\n"
-            "• Чтобы удалить уведомление, нажмите 'Удалить' рядом с нужным уведомлением.\n"
-            "• Вы можете включать или отключать уведомления по необходимости."
+            "<b>Настройки уведомлений для машины <code>{}</code></b>"
         ),
         "notification_status_enabled": "Уведомление было включено.",
         "notification_status_disabled": "Уведомление было отключено.",
@@ -354,9 +346,9 @@ CARTRACKING = {
         "notification_removed": "Уведомление было удалено",
         "add_notification_type": (
             "<b>Выберите тип уведомления для машины <code>{}</code></b>:\n\n"
-            "• Позиция в очереди (например, уведомлять, когда позиция = N)\n"
-            "• Интервал времени (например, уведомлять каждые N минут)\n"
-            "• Количество прошедших машин (например, уведомлять каждые N машин)"
+            "• <b>Позиция в очереди</b> (уведомлять, когда позиция = 'N')\n"
+            "• <b>Интервал времени</b> (уведомлять каждые 'N' минут)\n"
+            "• <b>Интервал машин</b> (уведомлять каждые 'N' машин)"
         ),
         "set_notification_value_number_in_queue": "Выберите значение для типа уведомления <b>Позиция в очереди</b>",
         "set_notification_value_every_n_minutes": "Выберите значение для типа уведомления <b>Каждые N минут</b>",
@@ -364,7 +356,7 @@ CARTRACKING = {
         "notification_added": (
             "<b>✅ Уведомление добавлено</b>\n\n"
             "Новое уведомление было добавлено для машины <code>{}</code>.\n"
-            "Проверьте иконку колокольчика рядом с каждым уведомлением. Нажмите на неё, чтобы включить или отключить уведомление."
+            "Нажмите на иконку 🔔 или 🔕, чтобы включить или отключить уведомление."
         ),
         "no_notification_found": "Уведомление не найдено с surr_id {}.",
         "car_current_position": "<b>{}</b> находится на позиции <b>{}</b> в очереди (<b>{}</b>).",
@@ -434,8 +426,8 @@ BUTTONS = {
         "notification_type_every_n_minutes": "every {} min",
         "notification_type_every_n_cars": "every {} cars",
         "set_notification_type_number_in_queue": "Position in queue",
-        "set_notification_type_every_n_minutes": "Every N minutes",
-        "set_notification_type_every_n_cars": "Every N cars",
+        "set_notification_type_every_n_minutes": "Every 'N' minutes",
+        "set_notification_type_every_n_cars": "Every 'N' cars",
         "selected_car_settings": "🔙 Selected car settings"
     },
     "ru": {
@@ -482,8 +474,8 @@ BUTTONS = {
         "notification_type_every_n_minutes": "каждые {} мин",
         "notification_type_every_n_cars": "каждые {} маш",
         "set_notification_type_number_in_queue": "Позиция в очереди",
-        "set_notification_type_every_n_minutes": "Каждые N минут",
-        "set_notification_type_every_n_cars": "Каждые N машин",
+        "set_notification_type_every_n_minutes": "Интервал времени",
+        "set_notification_type_every_n_cars": "Интервал машин",
         "selected_car_settings": "🔙 Настройки выбранной машины"
     }
 }
