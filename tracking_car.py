@@ -222,7 +222,7 @@ def track_user_car(surr_id: int, lang: str, stop_event=None) -> None:
 
             # reached absolute threshold
             if status_code == 2 and position < notification_value:
-                send_telegram_message(CARTRACKING[lang]["car_moved_forward"].format(car, notification_value, position, current_status[0]), user_id)
+                send_telegram_message(CARTRACKING[lang]["car_moved_forward"].format(car, position, current_status[0].capitalize()), user_id)
                 try:
                     deactivate_user_car_notification_in_db(surr_id)
                 except Exception as e:

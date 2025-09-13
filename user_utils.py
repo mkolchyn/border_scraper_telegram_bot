@@ -321,6 +321,21 @@ def get_user_car_notifications_from_db(user_id: int, car: str):
     finally:
         session.close()
 
+def remove_all_user_car_notifications_from_db(user_id: int, car: str):
+    """Remove all notifications for a user's specific car."""
+    session = get_local_session()
+    try:
+        notifications = session.query(UserNotification)\
+            .filter_by(telegram_id=user_id, car_plate=car).all()
+
+        for notification in notifications:
+            session.delete(notification)
+
+        session.commit()
+        
+    finally:
+        session.close()
+
 def remove_user_car_notification_from_db(surr_id: int):
     """Remove a specific notification for a user's car."""
     session = get_local_session()

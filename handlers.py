@@ -32,6 +32,7 @@ from user_utils import (
     get_user_cars_current_status,
     set_user_car_notification_in_db,
     get_user_car_notifications_from_db,
+    remove_all_user_car_notifications_from_db,
     remove_user_car_notification_from_db,
     deactivate_user_car_notification_in_db,
     activate_user_car_notification_in_db
@@ -141,6 +142,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         plate = parts[2]  # extract the plate number
         user_id = query.from_user.id
         remove_user_car_from_db(user_id, plate)
+        remove_all_user_car_notifications_from_db(user_id, plate)
         await query.edit_message_text(
             CARTRACKING[user_lang]["car_removed"].format(plate),
             reply_markup=InlineKeyboardMarkup(build_car_tracking_menu(query, user_lang)),
