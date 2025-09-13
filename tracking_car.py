@@ -166,9 +166,8 @@ def track_user_car(surr_id: int, lang: str, stop_event=None) -> None:
             status_code = current_status[4]
             if status_code == 2:
                 send_telegram_message(
-                    CARTRACKING[lang]["car_found_in_queue"].format(car) + "\n" +
-                    CARTRACKING[lang]["car_status_details"].format(
-                        current_status[0].capitalize(), current_status[1], current_status[2], current_status[3]
+                    CARTRACKING[lang]["car_current_position"].format(
+                        current_status[1], current_status[2], current_status[0].capitalize()
                     ),
                     user_id
                 )
@@ -214,9 +213,8 @@ def track_user_car(surr_id: int, lang: str, stop_event=None) -> None:
             # moved forward by N cars since last snapshot
             if status_code == 2 and last_snapshot is not None and position <= last_snapshot - notification_value:
                 send_telegram_message(
-                    CARTRACKING[lang]["car_found_in_queue"].format(car) + "\n" +
-                    CARTRACKING[lang]["car_status_details"].format(
-                        current_status[0].capitalize(), current_status[1], current_status[2], current_status[3]
+                    CARTRACKING[lang]["car_current_position"].format(
+                        current_status[1], current_status[2], current_status[0].capitalize()
                     ),
                     user_id
                 )

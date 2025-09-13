@@ -275,18 +275,32 @@ CARTRACKING = {
             "• Number of cars passed (e.g., notify every N cars)"
         ),
         "set_notification_value_number_in_queue": "Select value for notification type <b>Position in queue</b>",
-        "set_notification_value_every_n_minutes": "Select value for notification type <b>Every N minutes</b>",
-        "set_notification_value_every_n_cars": "Select value for notification type <b>Every N cars</b>",
+        "set_notification_value_every_n_minutes": "Select value for notification type <b>Every 'N' minutes</b>",
+        "set_notification_value_every_n_cars": "Select value for notification type <b>Every 'N' cars</b>",
         "notification_added": (
             "<b>✅ Notification Added</b>\n\n"
             "A new notification has been added for car <code>{}</code>.\n"
-            "Check the bell icon next to each notification. Tap it to enable or disable the notification."
+            "Check the icons 🔔 & 🔕 next to each notification.\nTap them to enable or disable the notification."
         ),
         "no_notification_found": "No notification found with surr_id {}.",
-        "car_reached_position": "Your car {} has reached position {} in the queue ({}).",
-        "car_summoned": "Your car {} is currently summoned to the border checkpoint.",
-        "car_no_longer_in_queue": "Your car {} is no longer in any queue.",
-        "car_moved_forward": "Your car {} has moved forward by {} positions and is now at position {} in the queue ({})."
+        "car_current_position": "<b>{}</b> is at position <b>{}</b> in the queue (<b>{}</b>).",
+        "car_reached_position": (
+            "<b>{}</b> has reached position <b>{}</b> in the queue (<b>{}</b>).\n"
+            "🔕 <b>Notification has been disabled.</b>"
+        ),
+        "car_summoned": (
+            "<b>{}</b> is currently summoned to the border checkpoint.\n"
+            "🔕 <b>Notification has been disabled.</b>"
+        ),
+        "car_no_longer_in_queue": (
+            "<b>{}</b> is no longer in any queue.\n"
+            "🔕 <b>Notification has been disabled.</b>"
+        ),
+        "car_moved_forward": (
+            "<b>{}</b> is at position <b>{}</b> in the queue (<b>{}</b>).\n"
+            "Current position is less than the one selected in the notification.\n"
+            "🔕 <b>Notification has been disabled.</b>"
+        )
     },
     "ru": {
         "car_tracking_intro": (
@@ -353,10 +367,24 @@ CARTRACKING = {
             "Проверьте иконку колокольчика рядом с каждым уведомлением. Нажмите на неё, чтобы включить или отключить уведомление."
         ),
         "no_notification_found": "Уведомление не найдено с surr_id {}.",
-        "car_reached_position": "Ваш автомобиль {} достиг позиции {} в очереди ({}).",
-        "car_summoned": "Ваш автомобиль {} в настоящее время вызван на пограничный контроль.",
-        "car_no_longer_in_queue": "Ваш автомобиль {} больше не находится в очереди.",
-        "car_moved_forward": "Ваш автомобиль {} продвинулся на {} позиций и теперь находится на позиции {} в очереди ({})."
+        "car_current_position": "<b>{}</b> находится на позиции <b>{}</b> в очереди (<b>{}</b>).",
+        "car_reached_position": (
+            "<b>{}</b> находится на позиции <b>{}</b> в очереди (<b>{}</b>).\n"
+            "🔕 <b>Уведомление было отключено.</b>"
+        ),
+        "car_summoned": (
+            "<b>{}</b> в настоящее время вызвана на пограничный контроль.\n"
+            "🔕 <b>Уведомление было отключено.</b>"
+        ),
+        "car_no_longer_in_queue": (
+            "<b>{}</b> больше не находится в очереди.\n"
+            "🔕 <b>Уведомление было отключено.</b>"
+        ),
+        "car_moved_forward": (
+            "<b>{}</b> находится на позиции <b>{}</b> в очереди (<b>{}</b>).\n"
+            "Текущая позиция меньше выбранной в уведомлении.\n"
+            "🔕 <b>Уведомление было отключено.</b>"
+        )
     }
 }
 
