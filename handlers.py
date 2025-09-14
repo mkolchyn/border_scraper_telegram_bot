@@ -268,7 +268,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif data.startswith("remove_notification_"):
         parts = data.split("_", 3)
-        notification_surr_id = parts[2] # exctract notification id
+        notification_surr_id = parts[2] # extract notification id
         car_plate = parts[3]  # extract the plate number
         remove_user_car_notification_from_db(notification_surr_id)
         await query.edit_message_text(

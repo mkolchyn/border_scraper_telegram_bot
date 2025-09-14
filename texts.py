@@ -238,7 +238,7 @@ CARTRACKING = {
         ),
         "car_added_error": (
             "❌ Invalid plate format.\n\n"
-            "Use up to 7 characters, only uppercase letters and numbers, "
+            "Use up to 10 characters, only uppercase letters and numbers, "
             "with at least one digit (e.g. <b>ABC123</b>)."
         ),
         "car_found_in_queue": (
@@ -324,7 +324,7 @@ CARTRACKING = {
         ),
         "car_added_error": (
             "❌ Неверный формат номера.\n\n"
-            "Используйте до 7 символов, только заглавные буквы и цифры, "
+            "Используйте до 10 символов, только заглавные буквы и цифры, "
             "с как минимум одной цифрой (например, <b>ABC123</b>)."
         ),
         "car_found_in_queue": (

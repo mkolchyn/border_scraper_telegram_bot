@@ -157,7 +157,7 @@ def build_car_settings_menu(user_id, car: str, lang: str):
     return keyboard
 
 def build_notification_type_menu(plate: str, lang: str):
-    return[
+    return [
         [InlineKeyboardButton(BUTTONS[lang]["set_notification_type_number_in_queue"], callback_data=f"set_notification_type_{plate}_number-in-queue")],
         [InlineKeyboardButton(BUTTONS[lang]["set_notification_type_every_n_minutes"], callback_data=f"set_notification_type_{plate}_every-n-minutes")],
         [InlineKeyboardButton(BUTTONS[lang]["set_notification_type_every_n_cars"], callback_data=f"set_notification_type_{plate}_every-n-cars")],
