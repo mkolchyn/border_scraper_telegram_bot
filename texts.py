@@ -263,6 +263,7 @@ CARTRACKING = {
         "notification_status_disabled": "Notification has been disabled.",
         "notification_activation_failed": "Failed to activate notification. Most probably the car is not in the queue.",
         "notification_removed":"Notification has been removed",
+        "notification_already_exists": "A similar notification already exists for car <b>{}</b>.",
         "add_notification_type": (
             "<b>Select notification type for car <code>{}</code></b>\n\n"
             "Choose the type of notification you want to set for this car:\n"
@@ -348,6 +349,7 @@ CARTRACKING = {
         "notification_status_disabled": "Уведомление было отключено.",
         "notification_activation_failed": "Не удалось активировать уведомление. Скорее всего, машина не в очереди.",
         "notification_removed": "Уведомление было удалено",
+        "notification_already_exists": "Такое уведомление уже существует для машины <b>{}</b>.",
         "add_notification_type": (
             "<b>Выберите тип уведомления для машины <code>{}</code></b>:\n\n"
             "• <b>Позиция в очереди</b> (уведомлять, когда позиция = 'N')\n"

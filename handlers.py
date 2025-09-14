@@ -225,6 +225,15 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 parse_mode="HTML"
             )
         elif notification_type == "summoned":
+            notification_exists = get_user_car_notifications_from_db(user_id, car_plate, notification_type, None)
+            if notification_exists:
+                await query.edit_message_text(
+                    CARTRACKING[user_lang]["notification_already_exists"].format(car_plate),
+                    reply_markup=InlineKeyboardMarkup(build_car_settings_menu(user_id, car_plate, user_lang)),
+                    parse_mode="HTML"
+                )
+                return
+            
             set_user_car_notification_in_db(user_id, car_plate, notification_type, None)
             await query.edit_message_text(
                 CARTRACKING[user_lang]["notification_added"].format(car_plate),
@@ -239,6 +248,15 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         notification_value = parts[5]
         user_id = query.from_user.id
     
+        notification_exists = get_user_car_notifications_from_db(user_id, car_plate, notification_type, notification_value)
+        if notification_exists:
+            await query.edit_message_text(
+                CARTRACKING[user_lang]["notification_already_exists"].format(car_plate),
+                reply_markup=InlineKeyboardMarkup(build_car_settings_menu(user_id, car_plate, user_lang)),
+                parse_mode="HTML"
+            )
+            return
+        
         set_user_car_notification_in_db(user_id, car_plate, notification_type, notification_value)
 
         await query.edit_message_text(

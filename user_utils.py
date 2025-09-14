@@ -311,13 +311,18 @@ def set_user_car_notification_in_db(user_id: int, car: str, notification_type: s
     finally:
         session.close()
 
-def get_user_car_notifications_from_db(user_id: int, car: str):
-    """Fetch all active notifications for a user's specific car."""
+def get_user_car_notifications_from_db(user_id: int, car: str, notification_type: str, notification_value: int):
+    """Fetch notifications for a user's specific car, optionally filtered by type and value."""
     session = get_local_session()
     try:
-        notifications = session.query(UserNotification)\
-            .filter_by(telegram_id=user_id, car_plate=car).all()
-        return notifications
+        if notification_type and notification_value is not None:
+            notifications = session.query(UserNotification)\
+                .filter_by(telegram_id=user_id, car_plate=car, notification_type=notification_type, notification_value=notification_value).all()
+            return notifications
+        else:
+            notifications = session.query(UserNotification)\
+                .filter_by(telegram_id=user_id, car_plate=car).all()
+            return notifications
     finally:
         session.close()
 

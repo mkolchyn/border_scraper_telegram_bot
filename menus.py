@@ -120,7 +120,7 @@ def build_car_tracking_menu(query, lang: str):
     return keyboard
 
 def build_car_settings_menu(user_id, car: str, lang: str):
-    notifications = get_user_car_notifications_from_db(user_id, car)
+    notifications = get_user_car_notifications_from_db(user_id, car, None, None)
 
     keyboard = []
     if notifications:
