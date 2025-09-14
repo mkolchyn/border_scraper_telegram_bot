@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 from io import BytesIO
 import math
 
+
 # Load environment variables from .env file
 load_dotenv()
 
@@ -20,7 +21,18 @@ def local_get_engine():
         f"postgresql+psycopg2://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}"
         f"@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}"
     )
-    return create_engine(db_url, pool_pre_ping=True, future=True)
+    return create_engine(
+        db_url,
+        pool_pre_ping=True,
+        pool_recycle=300,
+        future=True,
+    )
+
+def get_local_session():
+    """Return a new session bound to a fresh engine (safe for multiprocessing)."""
+    engine = local_get_engine()
+    Session = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    return Session()
 
 # Session factory
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=local_get_engine())

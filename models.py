@@ -33,3 +33,21 @@ class UserAction(Base):
     telegram_id = Column(Integer, nullable=False)
     action = Column(Text, nullable=False)
     timestamp = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class UserNotification(Base):
+    __tablename__ = "user_notification"
+
+    surr_id = Column(Integer, primary_key=True, autoincrement=True)
+    telegram_id = Column(BigInteger, index=True, nullable=False)
+    car_plate = Column(String(20), nullable=False)
+    notification_type = Column(String(50), nullable=False)
+    notification_value = Column(Integer, nullable=True)
+    notification_status = Column(Boolean, nullable=False, default=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    changed_at = Column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+        nullable=False,
+    )

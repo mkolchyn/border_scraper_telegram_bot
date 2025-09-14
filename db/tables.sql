@@ -22,3 +22,15 @@ CREATE TABLE IF NOT EXISTS user_actions (
     action TEXT NOT NULL,
     timestamp TIMESTAMP NOT NULL DEFAULT NOW()
 );
+
+-- Notifications table
+CREATE TABLE IF NOT EXISTS user_notification (
+    id SERIAL PRIMARY KEY,
+    telegram_id BIGINT NOT NULL,
+    car_plate VARCHAR(20) NOT NULL,
+    notification_type VARCHAR(50) NOT NULL,
+    notification_value int(10),
+    notification_status BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    changed_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
