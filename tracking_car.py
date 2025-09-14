@@ -239,7 +239,41 @@ def track_user_car(surr_id: int, lang: str, stop_event=None) -> None:
 
             if not sleep_with_stop(poll_interval, stop_event):
                 break
+        
+    # ---------- "summoned" ----------
+    elif notification_type == "summoned":
+        poll_interval = 60
+        while True:
+            if stop_requested():
+                print(f"[INFO] stop requested; exiting tracker {surr_id}.")
+                break
 
+            if not check_notification_active(surr_id):
+                print(f"[DEBUG] Notification {surr_id} for {user_id}/{car} is deactivated.")
+                break
+
+            current_status = get_user_cars_current_status(car)
+            if current_status is None:
+                send_telegram_message(CARTRACKING[lang]["car_no_longer_in_queue"].format(car), user_id)
+                try:
+                    deactivate_user_car_notification_in_db(surr_id)
+                except Exception as e:
+                    print(f"[WARN] Failed to deactivate {surr_id}: {e}")
+                break
+
+            status_code = current_status[4]
+
+            if status_code == 3:  # summoned
+                send_telegram_message(CARTRACKING[lang]["car_summoned"].format(car), user_id)
+                try:
+                    deactivate_user_car_notification_in_db(surr_id)
+                except Exception as e:
+                    print(f"[WARN] Failed to deactivate {surr_id}: {e}")
+                break
+
+            if not sleep_with_stop(poll_interval, stop_event):
+                break
+    
     else:
         print(f"[WARN] Unknown notification type '{notification_type}' for surr_id={surr_id}.")
 

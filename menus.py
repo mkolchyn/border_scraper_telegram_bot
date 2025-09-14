@@ -138,6 +138,8 @@ def build_car_settings_menu(user_id, car: str, lang: str):
                 button_name = BUTTONS[lang]["notification_type_every_n_minutes"].format(notification.notification_value)
             elif notification.notification_type == "every-n-cars":
                 button_name = BUTTONS[lang]["notification_type_every_n_cars"].format(notification.notification_value)
+            elif notification.notification_type == "summoned":
+                button_name = BUTTONS[lang]["notification_type_summoned"]
 
             keyboard.append(
                 [InlineKeyboardButton(button_name + status, callback_data=command + f"_{notification.surr_id}_{notification.car_plate}"),
@@ -145,10 +147,10 @@ def build_car_settings_menu(user_id, car: str, lang: str):
             )
         if len(notifications) < 5:
             keyboard.append([InlineKeyboardButton(BUTTONS[lang]["add_notification"], callback_data=f"add_notification_{car}")])
-            keyboard.append([InlineKeyboardButton(BUTTONS[lang]["car_tracking"], callback_data="car_tracking")])
+            keyboard.append([InlineKeyboardButton(BUTTONS[lang]["car_tracking_back"], callback_data="car_tracking")])
     else:
         keyboard.append([InlineKeyboardButton(BUTTONS[lang]["add_notification"], callback_data=f"add_notification_{car}")])
-        keyboard.append([InlineKeyboardButton(BUTTONS[lang]["car_tracking"], callback_data="car_tracking")])
+        keyboard.append([InlineKeyboardButton(BUTTONS[lang]["car_tracking_back"], callback_data="car_tracking")])
 
     keyboard.append([InlineKeyboardButton(BUTTONS[lang]["menu"], callback_data="menu")])
     
@@ -159,6 +161,7 @@ def build_notification_type_menu(plate: str, lang: str):
         [InlineKeyboardButton(BUTTONS[lang]["set_notification_type_number_in_queue"], callback_data=f"set_notification_type_{plate}_number-in-queue")],
         [InlineKeyboardButton(BUTTONS[lang]["set_notification_type_every_n_minutes"], callback_data=f"set_notification_type_{plate}_every-n-minutes")],
         [InlineKeyboardButton(BUTTONS[lang]["set_notification_type_every_n_cars"], callback_data=f"set_notification_type_{plate}_every-n-cars")],
+        [InlineKeyboardButton(BUTTONS[lang]["set_notification_type_summoned"], callback_data=f"set_notification_type_{plate}_summoned")],
         [InlineKeyboardButton(BUTTONS[lang]["selected_car_settings"], callback_data=f"settings_{plate}")],
         [InlineKeyboardButton(BUTTONS[lang]["menu"], callback_data="menu")]
     ]

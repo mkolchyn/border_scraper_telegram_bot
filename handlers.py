@@ -157,11 +157,19 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         if car_info:
             buffer_zone_name, regnum, order_id, registration_date, status = car_info
-            await query.edit_message_text(
-                CARTRACKING[user_lang]["car_found_in_queue"].format(plate) + "\n" +
-                CARTRACKING[user_lang]["car_status_details"].format(buffer_zone_name.capitalize(), regnum, order_id, registration_date),
-                reply_markup=InlineKeyboardMarkup(build_car_tracking_menu(query, user_lang)),
-                parse_mode="HTML"
+            if status == 3:
+                await query.edit_message_text(
+                    CARTRACKING[user_lang]["car_summoned_short"].format(plate),
+                    reply_markup=InlineKeyboardMarkup(build_car_tracking_menu(query, user_lang)),
+                    parse_mode="HTML"
+                )
+                return
+            else:
+                await query.edit_message_text(
+                    CARTRACKING[user_lang]["car_found_in_queue"].format(plate) + "\n" +
+                    CARTRACKING[user_lang]["car_status_details"].format(buffer_zone_name.capitalize(), regnum, order_id, registration_date),
+                    reply_markup=InlineKeyboardMarkup(build_car_tracking_menu(query, user_lang)),
+                    parse_mode="HTML"
             )
         else:
             await query.edit_message_text(
@@ -196,6 +204,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parts = data.split("_")
         car_plate = parts[3]
         notification_type = parts[4]
+        user_id = query.from_user.id
 
         if notification_type == "number-in-queue":
             await query.edit_message_text(
@@ -213,6 +222,13 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await query.edit_message_text(
                 CARTRACKING[user_lang]["set_notification_value_every_n_cars"],
                 reply_markup=InlineKeyboardMarkup(build_notification_every_n_cars_menu(car_plate, user_lang)),
+                parse_mode="HTML"
+            )
+        elif notification_type == "summoned":
+            set_user_car_notification_in_db(user_id, car_plate, notification_type, None)
+            await query.edit_message_text(
+                CARTRACKING[user_lang]["notification_added"].format(car_plate),
+                reply_markup=InlineKeyboardMarkup(build_car_settings_menu(user_id, car_plate, user_lang)),
                 parse_mode="HTML"
             )
 

@@ -268,14 +268,15 @@ CARTRACKING = {
             "Choose the type of notification you want to set for this car:\n"
             "• Position in queue (e.g., notify when position = 'N')\n"
             "• Time interval (e.g., notify every 'N' minutes)\n"
-            "• Number of cars passed (e.g., notify every 'N' cars)"
+            "• Number of cars passed (e.g., notify every 'N' cars)\n"
+            "• Summoned to checkpoint (notify when the car is summoned to the border checkpoint)\n"
         ),
         "set_notification_value_number_in_queue": "Select value for notification type <b>Position in queue</b>",
-        "set_notification_value_every_n_minutes": "Select value for notification type <b>Every 'N' minutes</b>",
-        "set_notification_value_every_n_cars": "Select value for notification type <b>Every 'N' cars</b>",
+        "set_notification_value_every_n_minutes": "Select value for notification type <b>Time interval</b>",
+        "set_notification_value_every_n_cars": "Select value for notification type <b>Number of cars passed</b>",
         "notification_added": (
             "<b>✅ Notification Added</b>\n\n"
-            "A new notification has been added for car <code>{}</code>.\n"
+            "A new notification has been added for car <b>{}</b>.\n"
             "Check the icons 🔔 & 🔕 next to each notification.\nTap them to enable or disable the notification."
         ),
         "no_notification_found": "No notification found with surr_id {}.",
@@ -285,8 +286,11 @@ CARTRACKING = {
             "🔕 <b>Notification has been disabled.</b>"
         ),
         "car_summoned": (
-            "<b>{}</b> is currently summoned to the border checkpoint.\n"
+            "<b>{}</b> has been summoned to the border checkpoint.\n"
             "🔕 <b>Notification has been disabled.</b>"
+        ),
+        "car_summoned_short": (
+            "<b>{}</b> has been summoned to the border checkpoint."
         ),
         "car_no_longer_in_queue": (
             "<b>{}</b> is no longer in any queue.\n"
@@ -348,14 +352,15 @@ CARTRACKING = {
             "<b>Выберите тип уведомления для машины <code>{}</code></b>:\n\n"
             "• <b>Позиция в очереди</b> (уведомлять, когда позиция = 'N')\n"
             "• <b>Интервал времени</b> (уведомлять каждые 'N' минут)\n"
-            "• <b>Интервал машин</b> (уведомлять каждые 'N' машин)"
+            "• <b>Интервал машин</b> (уведомлять каждые 'N' машин)\n"
+            "• <b>Вызов на контроль</b> (уведомлять, когда машина вызвана на пограничный контроль)\n"
         ),
         "set_notification_value_number_in_queue": "Выберите значение для типа уведомления <b>Позиция в очереди</b>",
-        "set_notification_value_every_n_minutes": "Выберите значение для типа уведомления <b>Каждые N минут</b>",
-        "set_notification_value_every_n_cars": "Выберите значение для типа уведомления <b>Каждые N машин</b>",
+        "set_notification_value_every_n_minutes": "Выберите значение для типа уведомления <b>Интервал времени</b>",
+        "set_notification_value_every_n_cars": "Выберите значение для типа уведомления <b>Интервал машин</b>",
         "notification_added": (
             "<b>✅ Уведомление добавлено</b>\n\n"
-            "Новое уведомление было добавлено для машины <code>{}</code>.\n"
+            "Новое уведомление было добавлено для машины <b>{}</b>.\n"
             "Нажмите на иконку 🔔 или 🔕, чтобы включить или отключить уведомление."
         ),
         "no_notification_found": "Уведомление не найдено с surr_id {}.",
@@ -365,8 +370,11 @@ CARTRACKING = {
             "🔕 <b>Уведомление было отключено.</b>"
         ),
         "car_summoned": (
-            "<b>{}</b> в настоящее время вызвана на пограничный контроль.\n"
+            "<b>{}</b> вызвана на пограничный контроль.\n"
             "🔕 <b>Уведомление было отключено.</b>"
+        ),
+        "car_summoned_short": (
+            "<b>{}</b> вызвана на пограничный контроль."
         ),
         "car_no_longer_in_queue": (
             "<b>{}</b> больше не находится в очереди.\n"
@@ -415,6 +423,7 @@ BUTTONS = {
         "november": "November",
         "december": "December",
         "car_tracking": "Track your saved cars",
+        "car_tracking_back": "🔙 Track your saved cars",
         "add_car": "Add a car",
         "remove_car": "Remove",
         "settings_car": "Settings",
@@ -425,9 +434,11 @@ BUTTONS = {
         "notification_type_number_in_queue": "position {}",
         "notification_type_every_n_minutes": "every {} min",
         "notification_type_every_n_cars": "every {} cars",
+        "notification_type_summoned": "summoned",
         "set_notification_type_number_in_queue": "Position in queue",
         "set_notification_type_every_n_minutes": "Every 'N' minutes",
         "set_notification_type_every_n_cars": "Every 'N' cars",
+        "set_notification_type_summoned": "Summoned to checkpoint",
         "selected_car_settings": "🔙 Selected car settings"
     },
     "ru": {
@@ -463,6 +474,7 @@ BUTTONS = {
         "november": "Ноябрь",
         "december": "Декабрь",
         "car_tracking": "Отслеживание сохраненных машин",
+        "car_tracking_back": "🔙 Отслеживание сохраненных машин",
         "add_car": "Добавить машину",
         "remove_car": "Удалить",
         "settings_car": "Настройки",
@@ -473,9 +485,11 @@ BUTTONS = {
         "notification_type_number_in_queue": "позиция {}",
         "notification_type_every_n_minutes": "каждые {} мин",
         "notification_type_every_n_cars": "каждые {} маш",
+        "notification_type_summoned": "вызов на ПП",
         "set_notification_type_number_in_queue": "Позиция в очереди",
         "set_notification_type_every_n_minutes": "Интервал времени",
         "set_notification_type_every_n_cars": "Интервал машин",
+        "set_notification_type_summoned": "Вызов на контроль",
         "selected_car_settings": "🔙 Настройки выбранной машины"
     }
 }
