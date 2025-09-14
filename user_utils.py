@@ -321,6 +321,16 @@ def get_user_car_notifications_from_db(user_id: int, car: str):
     finally:
         session.close()
 
+def get_all_active_user_car_notifications_from_db():
+    """Fetch all active notifications for all users."""
+    session = get_local_session()
+    try:
+        notifications = session.query(UserNotification)\
+            .filter_by(notification_status=True).all()
+        return notifications
+    finally:
+        session.close()
+
 def remove_all_user_car_notifications_from_db(user_id: int, car: str):
     """Remove all notifications for a user's specific car."""
     session = get_local_session()
