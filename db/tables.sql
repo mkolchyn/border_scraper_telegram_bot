@@ -7,9 +7,6 @@ CREATE TABLE IF NOT EXISTS users (
     last_name TEXT,
     joined_at TIMESTAMP NOT NULL DEFAULT NOW(),
     lang VARCHAR(5) DEFAULT 'en',
-    car_1 VARCHAR(10),
-    car_2 VARCHAR(10),
-    car_3 VARCHAR(10),
     valid_from TIMESTAMP NOT NULL DEFAULT NOW(),
     valid_to TIMESTAMP,
     is_current BOOLEAN NOT NULL DEFAULT TRUE
