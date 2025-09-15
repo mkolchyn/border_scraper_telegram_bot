@@ -7,9 +7,6 @@ CREATE TABLE IF NOT EXISTS users (
     last_name TEXT,
     joined_at TIMESTAMP NOT NULL DEFAULT NOW(),
     lang VARCHAR(5) DEFAULT 'en',
-    car_1 VARCHAR(10),
-    car_2 VARCHAR(10),
-    car_3 VARCHAR(10),
     valid_from TIMESTAMP NOT NULL DEFAULT NOW(),
     valid_to TIMESTAMP,
     is_current BOOLEAN NOT NULL DEFAULT TRUE
@@ -33,4 +30,13 @@ CREATE TABLE IF NOT EXISTS user_notification (
     notification_status BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     changed_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+-- User cars table
+CREATE TABLE IF NOT EXISTS user_cars (
+    surr_id SERIAL PRIMARY KEY,
+    telegram_id BIGINT NOT NULL,
+    plate VARCHAR(10) NOT NULL,
+    car_type VARCHAR(10) NOT NULL,
+    insert_dt TIMESTAMP NOT NULL DEFAULT NOW()
 );

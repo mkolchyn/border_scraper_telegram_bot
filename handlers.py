@@ -11,6 +11,7 @@ from menus import (
     build_current_menu, 
     build_stats_menu, 
     build_car_tracking_menu, 
+    build_car_type_menu,
     build_country_menu, 
     build_estimations_menu, 
     build_month_menu, 
@@ -121,12 +122,25 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif data == "car_tracking":
         await query.edit_message_text(
-            CARTRACKING[user_lang]["car_tracking_intro"],
-            reply_markup=InlineKeyboardMarkup(build_car_tracking_menu(query,user_lang)),
+            CARTRACKING[user_lang]["car_type_tracking"],
+            reply_markup=InlineKeyboardMarkup(build_car_type_menu(user_lang)),
             parse_mode=ParseMode.HTML
         )
         return
     
+    elif data in ("car_type_passenger", "car_type_freight"):
+        car_type = "passenger" if data == "car_type_passenger" else "freight"
+        car_type_icon = "🚗" if car_type == "passenger" else "🚚"
+
+        await query.edit_message_text(
+            CARTRACKING[user_lang]["car_tracking_intro"].format(car_type_icon),
+            reply_markup=InlineKeyboardMarkup(build_car_tracking_menu(query, car_type, user_lang)),
+            parse_mode=ParseMode.HTML
+        )
+        # Store selected car type in user_data for later use
+        context.user_data["car_type"] = car_type
+        return
+
     elif data == "add_car":
         await query.edit_message_text(
             CARTRACKING[user_lang]["add_car_prompt"],
@@ -138,14 +152,16 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     
     elif data.startswith("remove_car"):
-        parts = data.split("_", 2)
-        plate = parts[2]  # extract the plate number
+        plate = data.split("_", 2)[2]
+        car_type = context.user_data.get("car_type")
         user_id = query.from_user.id
+
         remove_user_car_from_db(user_id, plate)
         remove_all_user_car_notifications_from_db(user_id, plate)
+
         await query.edit_message_text(
             CARTRACKING[user_lang]["car_removed"].format(plate),
-            reply_markup=InlineKeyboardMarkup(build_car_tracking_menu(query, user_lang)),
+            reply_markup=InlineKeyboardMarkup(build_car_tracking_menu(query, car_type, user_lang)),
             parse_mode="HTML"
         )
         return
@@ -153,14 +169,15 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif data.startswith("track_"):
         plate = data.replace("track_", "", 1)  # extract the plate number
         user_id = query.from_user.id
-        car_info = get_user_cars_current_status(plate)
+        car_type = context.user_data.get("car_type")
+        car_info = get_user_cars_current_status(plate, car_type)
 
         if car_info:
             buffer_zone_name, regnum, order_id, registration_date, status = car_info
             if status == 3:
                 await query.edit_message_text(
                     CARTRACKING[user_lang]["car_summoned_short"].format(plate),
-                    reply_markup=InlineKeyboardMarkup(build_car_tracking_menu(query, user_lang)),
+                    reply_markup=InlineKeyboardMarkup(build_car_tracking_menu(query, car_type, user_lang)),
                     parse_mode="HTML"
                 )
                 return
@@ -168,13 +185,13 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 await query.edit_message_text(
                     CARTRACKING[user_lang]["car_found_in_queue"].format(plate) + "\n" +
                     CARTRACKING[user_lang]["car_status_details"].format(buffer_zone_name.capitalize(), regnum, order_id, registration_date),
-                    reply_markup=InlineKeyboardMarkup(build_car_tracking_menu(query, user_lang)),
+                    reply_markup=InlineKeyboardMarkup(build_car_tracking_menu(query, car_type, user_lang)),
                     parse_mode="HTML"
             )
         else:
             await query.edit_message_text(
                 CARTRACKING[user_lang]["car_not_found_in_queue"].format(plate),
-                reply_markup=InlineKeyboardMarkup(build_car_tracking_menu(query, user_lang)),
+                reply_markup=InlineKeyboardMarkup(build_car_tracking_menu(query, car_type, user_lang)),
                 parse_mode="HTML"
             )
         return
@@ -280,9 +297,11 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif data.startswith("enable_") or data.startswith("disable_"):
         action, notification_surr_id, car_plate = data.split("_", 2)
+        car_type = context.user_data.get("car_type")
+
         if action == "enable":
-            if activate_user_car_notification_in_db(notification_surr_id, car_plate):
-                p = Process(target=track_user_car, args=(notification_surr_id, user_lang))
+            if activate_user_car_notification_in_db(notification_surr_id, car_plate, car_type):
+                p = Process(target=track_user_car, args=(notification_surr_id, car_type, user_lang))
                 p.start()
                 message = CARTRACKING[user_lang]["notification_status_enabled"]
             else:
@@ -398,13 +417,15 @@ async def handle_plate(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     PLATE_PATTERN = re.compile(r'^(?=.*[A-Z])(?=.*\d)[A-Z0-9]{1,10}$')
     plate = update.message.text.strip().upper()
-    user_lang = get_user_lang(update.message.from_user.id)
+    user_id = update.message.from_user.id
+    user_lang = get_user_lang(user_id)
+    car_type = context.user_data.get("car_type")
 
     if PLATE_PATTERN.match(plate):
-        set_user_car_into_db(update.message.from_user, plate, user_lang)
+        set_user_car_into_db(user_id, plate, car_type)
         await update.message.reply_text(
             CARTRACKING[user_lang]["car_added"].format(plate),
-            reply_markup=InlineKeyboardMarkup(build_car_tracking_menu(update.message, user_lang)),
+            reply_markup=InlineKeyboardMarkup(build_car_tracking_menu(update.message, car_type, user_lang)),
             parse_mode="HTML"
         )
         
@@ -412,6 +433,6 @@ async def handle_plate(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text(
             CARTRACKING[user_lang]["car_added_error"],
-            reply_markup=InlineKeyboardMarkup(build_car_tracking_menu(update.message, user_lang)),
+            reply_markup=InlineKeyboardMarkup(build_car_tracking_menu(update.message, car_type, user_lang)),
             parse_mode="HTML"
         )

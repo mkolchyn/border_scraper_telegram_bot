@@ -8,7 +8,7 @@ from telegram.ext import (
     filters
 )
 from handlers import start, restart, menu, button_handler, handle_plate
-from user_utils import get_all_active_user_car_notifications_from_db, get_user_lang
+from user_utils import get_all_active_user_car_notifications_from_db, get_user_lang, get_user_car_types_from_db
 from tracking_car import track_user_car
 from multiprocessing import Process
 
@@ -23,7 +23,8 @@ def main():
     notifications = get_all_active_user_car_notifications_from_db()
     for notification in notifications:
         user_lang = get_user_lang(notification.telegram_id)
-        p = Process(target=track_user_car, args=(notification.surr_id, user_lang))
+        car_type = get_user_car_types_from_db(notification.telegram_id, notification.car_plate)
+        p = Process(target=track_user_car, args=(notification.surr_id, car_type, user_lang))
         p.start()
 
     app = ApplicationBuilder().token(TOKEN).build()
