@@ -120,7 +120,7 @@ def build_car_tracking_menu(query, car_type: str, lang: str):
                 InlineKeyboardButton(BUTTONS[lang]["settings_car"], callback_data=f"settings_{car}"),
                 InlineKeyboardButton(BUTTONS[lang]["remove_car"], callback_data=f"remove_car_{car}")]
             )
-        if len(cars) < 5:  # Limit to 5 car
+        if len(cars) < 5:  # Limit to 5 cars
             keyboard.append([InlineKeyboardButton(BUTTONS[lang]["add_car"], callback_data="add_car")])
     else:
         keyboard.append([InlineKeyboardButton(BUTTONS[lang]["add_car"], callback_data="add_car")])

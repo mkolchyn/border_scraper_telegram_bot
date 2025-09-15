@@ -362,7 +362,7 @@ def activate_user_car_notification_in_db(surr_id: int, car: str, car_type: str):
     finally:
         session.close()
 
-def get_user_car_types_from_db(user_id: int, car: int):
+def get_user_car_types_from_db(user_id: int, car: str):
     """Fetch distinct car types for a user."""
     session: Session = get_local_session()
     try:
@@ -371,6 +371,6 @@ def get_user_car_types_from_db(user_id: int, car: int):
             .filter(UserCars.telegram_id == user_id, UserCars.plate == car)
             .first()
         )
-        return [car_types]  # Extract car_type from tuples
+        return car_types  # Extract car_type from tuples
     finally:
         session.close()
