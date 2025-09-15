@@ -37,7 +37,7 @@ def sleep_with_stop(total_seconds: float, stop_event=None, check_every: float = 
         time.sleep(min(check_every, remaining))
 
 
-def fetch_notification(surr_id: int) -> Optional[UserNotification]:
+def fetch_notification(surr_id: int):
     """
     Get the notification row using a session created in THIS process.
     Returns ORM object (detached) or None.

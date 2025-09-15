@@ -371,6 +371,6 @@ def get_user_car_types_from_db(user_id: int, car: str):
             .filter(UserCars.telegram_id == user_id, UserCars.plate == car)
             .first()
         )
-        return car_types  # Extract car_type from tuples
+        return car_types[0] if car_types else None  # Extract car_type from tuples
     finally:
         session.close()
