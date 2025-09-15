@@ -70,7 +70,7 @@ def check_notification_active(surr_id: int) -> bool:
         return False
 
 
-def track_user_car(surr_id: int, lang: str, stop_event=None) -> None:
+def track_user_car(surr_id: int, car_type: str, lang: str, stop_event=None) -> None:
     """
     Refactored tracker:
       - Uses short-lived DB sessions (get_local_session) for each DB access
@@ -107,7 +107,7 @@ def track_user_car(surr_id: int, lang: str, stop_event=None) -> None:
                 print(f"[DEBUG] Notification {surr_id} for {user_id}/{car} is deactivated.")
                 break
 
-            current_status = get_user_cars_current_status(car)
+            current_status = get_user_cars_current_status(car, car_type)
             if current_status is None:
                 send_telegram_message(CARTRACKING[lang]["car_no_longer_in_queue"].format(car), user_id)
                 try:
@@ -154,7 +154,7 @@ def track_user_car(surr_id: int, lang: str, stop_event=None) -> None:
                 print(f"[DEBUG] Notification {surr_id} for {user_id}/{car} has been deactivated.")
                 break
 
-            current_status = get_user_cars_current_status(car)
+            current_status = get_user_cars_current_status(car, car_type)
             if current_status is None:
                 send_telegram_message(CARTRACKING[lang]["car_no_longer_in_queue"].format(car), user_id)
                 try:
@@ -186,7 +186,7 @@ def track_user_car(surr_id: int, lang: str, stop_event=None) -> None:
     elif notification_type == "every-n-cars":
         poll_interval = 60
         # snapshot of initial queue position
-        current_status = get_user_cars_current_status(car)
+        current_status = get_user_cars_current_status(car, car_type)
         last_snapshot = current_status[2] if current_status else None
 
         while True:
@@ -198,7 +198,7 @@ def track_user_car(surr_id: int, lang: str, stop_event=None) -> None:
                 print(f"[DEBUG] Notification {surr_id} for {user_id}/{car} has been deactivated.")
                 break
 
-            current_status = get_user_cars_current_status(car)
+            current_status = get_user_cars_current_status(car, car_type)
             if current_status is None:
                 send_telegram_message(CARTRACKING[lang]["car_no_longer_in_queue"].format(car), user_id)
                 try:
@@ -252,7 +252,7 @@ def track_user_car(surr_id: int, lang: str, stop_event=None) -> None:
                 print(f"[DEBUG] Notification {surr_id} for {user_id}/{car} is deactivated.")
                 break
 
-            current_status = get_user_cars_current_status(car)
+            current_status = get_user_cars_current_status(car, car_type)
             if current_status is None:
                 send_telegram_message(CARTRACKING[lang]["car_no_longer_in_queue"].format(car), user_id)
                 try:

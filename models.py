@@ -51,3 +51,12 @@ class UserNotification(Base):
         onupdate=func.now(),
         nullable=False,
     )
+
+class UserCars(Base):
+    __tablename__ = "user_cars"
+
+    surr_id = Column(Integer, primary_key=True, autoincrement=True)
+    telegram_id = Column(BigInteger, index=True, nullable=False)
+    plate = Column(String(10), nullable=False)
+    car_type = Column(String(10), nullable=False)
+    insert_dt = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)

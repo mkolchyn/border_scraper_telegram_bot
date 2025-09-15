@@ -95,28 +95,39 @@ def build_month_menu(country: str, year: str, lang: str):
     keyboard.append([InlineKeyboardButton(BUTTONS[lang]["menu"], callback_data="menu")])
     return keyboard
 
+def build_car_type_menu(lang: str):
+    return [
+        [InlineKeyboardButton(BUTTONS[lang]["car_type_passenger"], callback_data="car_type_passenger"),
+         InlineKeyboardButton(BUTTONS[lang]["car_type_freight"], callback_data="car_type_freight")],
+        [InlineKeyboardButton(BUTTONS[lang]["menu"], callback_data="menu")]
+    ]
+
 def build_car_tracking_menu_only(lang: str):
     return [
         [InlineKeyboardButton(BUTTONS[lang]["car_tracking"], callback_data="car_tracking")]
     ]
 
-def build_car_tracking_menu(query, lang: str):
+def build_car_tracking_menu(query, car_type: str, lang: str):
     user_id = query.from_user.id
-    cars = get_user_cars_from_db(user_id)
+    cars = get_user_cars_from_db(user_id, car_type)
 
     keyboard = []
-    for car in cars:
-        # Create a button for each car
-        if car:
+    # Create a button for each car
+    if cars:
+        for car in cars:
             keyboard.append(
                 [InlineKeyboardButton(car, callback_data=f"track_{car}"),
-                 InlineKeyboardButton(BUTTONS[lang]["settings_car"], callback_data=f"settings_{car}"),
-                 InlineKeyboardButton(BUTTONS[lang]["remove_car"], callback_data=f"remove_car_{car}")]
+                InlineKeyboardButton(BUTTONS[lang]["settings_car"], callback_data=f"settings_{car}"),
+                InlineKeyboardButton(BUTTONS[lang]["remove_car"], callback_data=f"remove_car_{car}")]
             )
-        else:
+        if len(cars) < 5:  # Limit to 5 car
             keyboard.append([InlineKeyboardButton(BUTTONS[lang]["add_car"], callback_data="add_car")])
-
+    else:
+        keyboard.append([InlineKeyboardButton(BUTTONS[lang]["add_car"], callback_data="add_car")])
+        
+    keyboard.append([InlineKeyboardButton(BUTTONS[lang]["car_tracking_back"], callback_data="car_tracking")])
     keyboard.append([InlineKeyboardButton(BUTTONS[lang]["menu"], callback_data="menu")])
+        
     return keyboard
 
 def build_car_settings_menu(user_id, car: str, lang: str):

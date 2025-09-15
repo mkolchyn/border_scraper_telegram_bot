@@ -34,3 +34,12 @@ CREATE TABLE IF NOT EXISTS user_notification (
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     changed_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
+
+-- User cars table
+CREATE TABLE IF NOT EXISTS user_cars (
+    surr_id SERIAL PRIMARY KEY,
+    telegram_id BIGINT NOT NULL,
+    plate VARCHAR(10) NOT NULL,
+    car_type VARCHAR(10) NOT NULL,
+    insert_dt TIMESTAMP NOT NULL DEFAULT NOW()
+);

@@ -219,9 +219,12 @@ ESTIMATIONS = {
 CARTRACKING = {
     "en": {
         "car_tracking_intro": (
-            "<b>Your Saved Cars</b>\n\n"
-            "Here you can find the cars you've saved for tracking.\n"
+            "<b>{} Your Saved Cars</b>\n\n"
             "Select a car to view its tracking information."
+        ),
+        "car_type_tracking": (
+            "<b>Select Car Type</b>\n\n"
+            "Please choose the type of car you want to track:"
         ),
         "add_car_prompt": (
             "<b>Add a Car</b>\n\n"
@@ -305,9 +308,12 @@ CARTRACKING = {
     },
     "ru": {
         "car_tracking_intro": (
-            "<b>Ваши сохраненные машины</b>\n\n"
-            "Здесь вы можете найти машины, которые вы сохранили для отслеживания.\n"
+            "<b>{} Ваши сохраненные машины</b>\n\n"
             "Выберите машину, чтобы просмотреть информацию об отслеживании."
+        ),
+        "car_type_tracking": (
+            "<b>Выбор типа машины</b>\n\n"
+            "Пожалуйста, выберите тип машины, которую вы хотите отслеживать:"
         ),
         "add_car_prompt": (
             "<b>Добавить машину</b>\n\n"
@@ -403,7 +409,7 @@ BUTTONS = {
         "24h": "last 24 hours",
         "7d": "last 7 days",
         "30d": "last 30 days",
-        "menu": "Main Menu",
+        "menu": "🏚️ Main Menu",
         "benyakoni": "Benyakoni  🇱🇹",
         "kamenny_log": "Kamenny Log  🇱🇹",
         "brest_bts": "Brest BTS (\"Varshavskiy Most\") 🇵🇱",
@@ -426,12 +432,13 @@ BUTTONS = {
         "december": "December",
         "car_tracking": "Track your saved cars",
         "car_tracking_back": "🔙 Track your saved cars",
-        "add_car": "Add a car",
+        "car_type_passenger": "Passenger 🚗",
+        "car_type_freight": "Freight 🚚",
+        "add_car": "➕ Add a car",
         "remove_car": "Remove",
         "settings_car": "Settings",
         "add_notification": "Add notification",
         "remove_notification": "Remove",
-        "disable_notification": "Disable",
         "enable_notification": "Enable",
         "notification_type_number_in_queue": "position {}",
         "notification_type_every_n_minutes": "every {} min",
@@ -444,9 +451,9 @@ BUTTONS = {
         "selected_car_settings": "🔙 Selected car settings"
     },
     "ru": {
-        "current": "Актуальная информация об очередях",
-        "stats":"Исторические данные по очередям",
-        "estimations": "Оценить скорость прохождения границы",
+        "current": "Актуальная информация",
+        "stats":"Исторические данные",
+        "estimations": "Оценить скорость границы",
         "country_lt": "Литва 🇱🇹",
         "country_lv": "Латвия 🇱🇻",
         "country_pl": "Польша 🇵🇱",
@@ -454,7 +461,7 @@ BUTTONS = {
         "24h": "за 24 часа",
         "7d": "за 7 дней",
         "30d": "за 30 дней",
-        "menu": "Главное меню",
+        "menu": "🏚️ Главное меню",
         "benyakoni": "Бенякони  🇱🇹",
         "kamenny_log": "Каменный Лог  🇱🇹",
         "brest_bts": "Брест БТС (\"Варшавский мост\")  🇵🇱",
@@ -475,14 +482,15 @@ BUTTONS = {
         "october": "Октябрь",
         "november": "Ноябрь",
         "december": "Декабрь",
-        "car_tracking": "Отслеживание сохраненных машин",
-        "car_tracking_back": "🔙 Отслеживание сохраненных машин",
-        "add_car": "Добавить машину",
+        "car_tracking": "Сохраненные машины",
+        "car_tracking_back": "🔙 Сохраненные машины",
+        "car_type_passenger": "Легковая 🚗",
+        "car_type_freight": "Грузовая 🚚",
+        "add_car": "➕ Добавить машину",
         "remove_car": "Удалить",
         "settings_car": "Настройки",
-        "add_notification": "Добавить уведомление",
+        "add_notification": "➕ Добавить уведомление",
         "remove_notification": "Удалить",
-        "disable_notification": "Отключить",
         "enable_notification": "Включить",
         "notification_type_number_in_queue": "позиция {}",
         "notification_type_every_n_minutes": "каждые {} мин",

@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func
 from datetime import datetime
 from db_functions import get_local_session
-from models import DBUser, UserAction, UserNotification
+from models import DBUser, UserAction, UserNotification, UserCars
 from datetime import datetime, timezone
 import time
 import httpx
@@ -156,7 +156,7 @@ def get_queue_length_current(checkpoint_id: str):
     except Exception as e:
         print(f"Error: {e}")
 
-def get_user_cars_current_status(car: str):
+def get_user_cars_current_status(car: str, car_type: str):
     """Check if 'car' is currently in any queue zones."""
     buffer_zones = {
         "benyakoni": "53d94097-2b34-11ec-8467-ac1f6bf889c0",
@@ -171,120 +171,78 @@ def get_user_cars_current_status(car: str):
 
         if not data:
             continue
-
-        car_live_queue = data.get("carLiveQueue", [])
-        for car_entry in car_live_queue:
-            if car_entry.get("regnum", "").upper() == car.upper():  # case-insensitive check
-                return (
-                    buffer_zone_name,
-                    car_entry["regnum"],
-                    car_entry["order_id"],
-                    car_entry["registration_date"],
-                    car_entry["status"]
-                )
+        if car_type == "passenger":
+            car_live_queue = data.get("carLiveQueue", [])
+            for car_entry in car_live_queue:
+                if car_entry.get("regnum", "").upper() == car.upper():  # case-insensitive check
+                    return (
+                        buffer_zone_name,
+                        car_entry["regnum"],
+                        car_entry["order_id"],
+                        car_entry["registration_date"],
+                        car_entry["status"]
+                    )
+        elif car_type == "freight":
+            truck_live_queue = data.get("truckLiveQueue", [])
+            for truck_entry in truck_live_queue:
+                if truck_entry.get("regnum", "").upper() == car.upper():  # case-insensitive check
+                    return (
+                        buffer_zone_name,
+                        truck_entry["regnum"],
+                        truck_entry["order_id"],
+                        truck_entry["registration_date"],
+                        truck_entry["status"]
+                    )
 
     return None
 
-def set_user_car_into_db(user: User, car: str, lang: str):
-    """Set car for 'user' table using SCD2."""
+def set_user_car_into_db(user_id: int, car: str, car_type: str):
+    """Save a car into user cars table."""
     session = get_local_session()
     try:
-        db_user = (
-            session.query(DBUser)
-            .filter_by(telegram_id=user.id, is_current=True)
-            .order_by(DBUser.surr_id.desc())
-            .first()
+        new_car = UserCars(
+            telegram_id=user_id,
+            plate=car,
+            car_type=car_type
         )
-
-        if db_user:
-            # Determine which car slot to fill
-            if db_user.car_1 is None:
-                slot = "car_1"
-            elif db_user.car_2 is None:
-                slot = "car_2"
-            elif db_user.car_3 is None:
-                slot = "car_3"
-            else:
-                # All slots full, maybe overwrite car_1 or return
-                slot = None
-
-            if slot:
-                # Close old record
-                db_user.valid_to = datetime.now(timezone.utc)
-                db_user.is_current = False
-
-                # Create new record with updated car
-                new_user = DBUser(
-                    telegram_id=user.id,
-                    username=db_user.username,
-                    first_name=db_user.first_name,
-                    last_name=db_user.last_name,
-                    joined_at=db_user.joined_at,
-                    lang=lang,
-                    car_1=db_user.car_1 if slot != "car_1" else car,
-                    car_2=db_user.car_2 if slot != "car_2" else car,
-                    car_3=db_user.car_3 if slot != "car_3" else car
-                )
-                session.add(new_user)
-        else:
-            # New user, insert record with car_1
-            new_user = DBUser(
-                telegram_id=user.id,
-                username=user.username,
-                first_name=user.first_name,
-                last_name=user.last_name,
-                joined_at=datetime.now(timezone.utc),
-                lang=lang,
-                car_1=car
-            )
-            session.add(new_user)
-
+        session.add(new_car)
         session.commit()
+
+    except Exception as e:
+        session.rollback()
+        print(f"Error saving car: {e}")
     finally:
         session.close()
 
-def get_user_cars_from_db(user_id: int):
+def get_user_cars_from_db(user_id: int, car_type: str):
     """Fetch all cars for a user using ORM (may include None)."""
     session: Session = get_local_session()
     try:
-        db_user = (
-            session.query(DBUser)
-            .filter(DBUser.telegram_id == user_id, DBUser.is_current == True)
-            .order_by(DBUser.surr_id.desc())
-            .first()
+        db_cars = (
+            session.query(UserCars)
+            .filter(UserCars.telegram_id == user_id, UserCars.car_type == car_type)
+            .order_by(UserCars.surr_id.desc())
+            .all()
         )
-        if db_user:
-            return [db_user.car_1, db_user.car_2, db_user.car_3]
+        if db_cars:
+            return [car.plate for car in db_cars]
         return []
     finally:
         session.close()
 
 def remove_user_car_from_db(user_id: int, car: str):
-    """Remove a specific car from user's tracked cars using SCD2."""
+    """Remove a specific car from user cars table."""
     session = get_local_session()
     try:
-        db_user = session.query(DBUser)\
-            .filter_by(telegram_id=user_id, is_current=True).first()
-
-        if db_user and car in (db_user.car_1, db_user.car_2, db_user.car_3):
-            # Close old record
-            db_user.valid_to = datetime.now(timezone.utc)
-            db_user.is_current = False
-
-            # Create new record without the specified car
-            new_user = DBUser(
-                telegram_id=db_user.telegram_id,
-                username=db_user.username,
-                first_name=db_user.first_name,
-                last_name=db_user.last_name,
-                joined_at=db_user.joined_at,
-                lang=db_user.lang,
-                car_1=db_user.car_1 if db_user.car_1 != car else None,
-                car_2=db_user.car_2 if db_user.car_2 != car else None,
-                car_3=db_user.car_3 if db_user.car_3 != car else None
-            )
-            session.add(new_user)
+        db_car = session.query(UserCars)\
+            .filter_by(telegram_id=user_id, plate=car).first()
+        if db_car:
+            session.delete(db_car)
             session.commit()
+
+    except Exception as e:
+        session.rollback()
+        print(f"Error removing car: {e}")
     finally:
         session.close()
 
@@ -292,22 +250,18 @@ def set_user_car_notification_in_db(user_id: int, car: str, notification_type: s
     """Set a notification for a user's car."""
     session = get_local_session()
     try:
-        db_user = session.query(DBUser)\
-            .filter_by(telegram_id=user_id, is_current=True).first()
-
-        if db_user and car in (db_user.car_1, db_user.car_2, db_user.car_3):
-            new_notification = UserNotification(
-                telegram_id=user_id,
-                car_plate=car,
-                notification_type=notification_type,
-                notification_value=notification_value
-            )
-            session.add(new_notification)
-        else:
-            print(f"[WARN] User {user_id} does not track car {car}, cannot set notification.")
-
+        new_notification = UserNotification(
+            telegram_id=user_id,
+            car_plate=car,
+            notification_type=notification_type,
+            notification_value=notification_value
+        )
+        session.add(new_notification)
         session.commit()
-        
+
+    except Exception as e:
+        session.rollback()
+        print(f"Error saving notification: {e}")
     finally:
         session.close()
 
@@ -385,11 +339,11 @@ def deactivate_user_car_notification_in_db(surr_id: int):
     finally:
         session.close()
 
-def activate_user_car_notification_in_db(surr_id: int, car: str):
+def activate_user_car_notification_in_db(surr_id: int, car: str, car_type: str):
     """Activate (set status to True) a specific notification for a user's car."""
     """Also checks if the car is currently in any queue."""
 
-    current_status = get_user_cars_current_status(car)
+    current_status = get_user_cars_current_status(car, car_type)
     if not current_status:
         return False
 
@@ -407,5 +361,18 @@ def activate_user_car_notification_in_db(surr_id: int, car: str):
             print(f"[WARN] No inactive notification found for surr_id {surr_id}.")
             return False
 
+    finally:
+        session.close()
+
+def get_user_car_types_from_db(user_id: int, car: int):
+    """Fetch distinct car types for a user."""
+    session: Session = get_local_session()
+    try:
+        car_types = (
+            session.query(UserCars.car_type)
+            .filter(UserCars.telegram_id == user_id, UserCars.plate == car)
+            .first()
+        )
+        return [car_types]  # Extract car_type from tuples
     finally:
         session.close()
