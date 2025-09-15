@@ -87,6 +87,7 @@ def track_user_car(surr_id: int, car_type: str, lang: str, stop_event=None) -> N
         print(f"[WARN] Notification {surr_id} not found; nothing to track.")
         return
 
+    car_type_icon = "🚗" if car_type == "passenger" else "🚚"
     user_id = notification.telegram_id
     car = notification.car_plate
     notification_type = notification.notification_type
@@ -109,7 +110,7 @@ def track_user_car(surr_id: int, car_type: str, lang: str, stop_event=None) -> N
 
             current_status = get_user_cars_current_status(car, car_type)
             if current_status is None:
-                send_telegram_message(CARTRACKING[lang]["car_no_longer_in_queue"].format(car), user_id)
+                send_telegram_message(car_type_icon + CARTRACKING[lang]["car_no_longer_in_queue"].format(car), user_id)
                 try:
                     deactivate_user_car_notification_in_db(surr_id)
                 except Exception as e:
@@ -121,7 +122,7 @@ def track_user_car(surr_id: int, car_type: str, lang: str, stop_event=None) -> N
 
             if position == notification_value:
                 send_telegram_message(
-                    CARTRACKING[lang]["car_reached_position"].format(car, notification_value, current_status[0].capitalize()),
+                    car_type_icon + CARTRACKING[lang]["car_reached_position"].format(car, notification_value, current_status[0].capitalize()),
                     user_id
                 )
                 try:
@@ -131,7 +132,7 @@ def track_user_car(surr_id: int, car_type: str, lang: str, stop_event=None) -> N
                 break
 
             if status_code == 3:  # summoned
-                send_telegram_message(CARTRACKING[lang]["car_summoned"].format(car), user_id)
+                send_telegram_message(car_type_icon + CARTRACKING[lang]["car_summoned"].format(car), user_id)
                 try:
                     deactivate_user_car_notification_in_db(surr_id)
                 except Exception as e:
@@ -156,7 +157,7 @@ def track_user_car(surr_id: int, car_type: str, lang: str, stop_event=None) -> N
 
             current_status = get_user_cars_current_status(car, car_type)
             if current_status is None:
-                send_telegram_message(CARTRACKING[lang]["car_no_longer_in_queue"].format(car), user_id)
+                send_telegram_message(car_type_icon + CARTRACKING[lang]["car_no_longer_in_queue"].format(car), user_id)
                 try:
                     deactivate_user_car_notification_in_db(surr_id)
                 except Exception as e:
@@ -166,13 +167,13 @@ def track_user_car(surr_id: int, car_type: str, lang: str, stop_event=None) -> N
             status_code = current_status[4]
             if status_code == 2:
                 send_telegram_message(
-                    CARTRACKING[lang]["car_current_position"].format(
+                    car_type_icon + CARTRACKING[lang]["car_current_position"].format(
                         current_status[1], current_status[2], current_status[0].capitalize()
                     ),
                     user_id
                 )
             elif status_code == 3:
-                send_telegram_message(CARTRACKING[lang]["car_summoned"].format(car), user_id)
+                send_telegram_message(car_type_icon + CARTRACKING[lang]["car_summoned"].format(car), user_id)
                 try:
                     deactivate_user_car_notification_in_db(surr_id)
                 except Exception as e:
@@ -200,7 +201,7 @@ def track_user_car(surr_id: int, car_type: str, lang: str, stop_event=None) -> N
 
             current_status = get_user_cars_current_status(car, car_type)
             if current_status is None:
-                send_telegram_message(CARTRACKING[lang]["car_no_longer_in_queue"].format(car), user_id)
+                send_telegram_message(car_type_icon + CARTRACKING[lang]["car_no_longer_in_queue"].format(car), user_id)
                 try:
                     deactivate_user_car_notification_in_db(surr_id)
                 except Exception as e:
@@ -213,7 +214,7 @@ def track_user_car(surr_id: int, car_type: str, lang: str, stop_event=None) -> N
             # moved forward by N cars since last snapshot
             if status_code == 2 and last_snapshot is not None and position <= last_snapshot - notification_value:
                 send_telegram_message(
-                    CARTRACKING[lang]["car_current_position"].format(
+                    car_type_icon + CARTRACKING[lang]["car_current_position"].format(
                         current_status[1], current_status[2], current_status[0].capitalize()
                     ),
                     user_id
@@ -222,7 +223,7 @@ def track_user_car(surr_id: int, car_type: str, lang: str, stop_event=None) -> N
 
             # reached absolute threshold
             if status_code == 2 and position < notification_value:
-                send_telegram_message(CARTRACKING[lang]["car_moved_forward"].format(car, position, current_status[0].capitalize()), user_id)
+                send_telegram_message(car_type_icon + CARTRACKING[lang]["car_moved_forward"].format(car, position, current_status[0].capitalize()), user_id)
                 try:
                     deactivate_user_car_notification_in_db(surr_id)
                 except Exception as e:
@@ -230,7 +231,7 @@ def track_user_car(surr_id: int, car_type: str, lang: str, stop_event=None) -> N
                 break
 
             if status_code == 3:
-                send_telegram_message(CARTRACKING[lang]["car_summoned"].format(car), user_id)
+                send_telegram_message(car_type_icon + CARTRACKING[lang]["car_summoned"].format(car), user_id)
                 try:
                     deactivate_user_car_notification_in_db(surr_id)
                 except Exception as e:
@@ -254,7 +255,7 @@ def track_user_car(surr_id: int, car_type: str, lang: str, stop_event=None) -> N
 
             current_status = get_user_cars_current_status(car, car_type)
             if current_status is None:
-                send_telegram_message(CARTRACKING[lang]["car_no_longer_in_queue"].format(car), user_id)
+                send_telegram_message(car_type_icon + CARTRACKING[lang]["car_no_longer_in_queue"].format(car), user_id)
                 try:
                     deactivate_user_car_notification_in_db(surr_id)
                 except Exception as e:
@@ -264,7 +265,7 @@ def track_user_car(surr_id: int, car_type: str, lang: str, stop_event=None) -> N
             status_code = current_status[4]
 
             if status_code == 3:  # summoned
-                send_telegram_message(CARTRACKING[lang]["car_summoned"].format(car), user_id)
+                send_telegram_message(car_type_icon + CARTRACKING[lang]["car_summoned"].format(car), user_id)
                 try:
                     deactivate_user_car_notification_in_db(surr_id)
                 except Exception as e:
