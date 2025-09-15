@@ -160,6 +160,7 @@ def get_user_cars_current_status(car: str, car_type: str):
         "brest_bts": "a9173a85-3fc0-424c-84f0-defa632481e4",
         "kamenny_log": "b60677d4-8a00-4f93-a781-e129e1692a03",
         "grigorovschina": "ffe81c11-00d6-11e8-a967-b0dd44bde851",
+        "kozlovichi": "98b5be92-d3a5-4ba2-9106-76eb4eb3df49"
     }
 
     for buffer_zone_name, checkpointID in buffer_zones.items():
