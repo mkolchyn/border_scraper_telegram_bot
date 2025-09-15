@@ -106,10 +106,7 @@ def set_user_lang(user: User, lang: str):
                     first_name=db_user.first_name,
                     last_name=db_user.last_name,
                     joined_at=db_user.joined_at,
-                    lang=lang,
-                    car_1=db_user.car_1,
-                    car_2=db_user.car_2,
-                    car_3=db_user.car_3
+                    lang=lang
                 )
                 session.add(new_user)
         else:
