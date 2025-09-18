@@ -1,11 +1,9 @@
 from telegram import User, InputMediaPhoto, InlineKeyboardMarkup
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
-from sqlalchemy import func
-from datetime import datetime
 from db_functions import get_local_session
 from models import DBUser, UserAction, UserNotification, UserCars
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 import time
 import httpx
 from io import BytesIO
@@ -134,7 +132,7 @@ def fetch_data_from_api(url):
     else:
         raise Exception(f"Failed to fetch data: {response.status_code}, {response.text}")
 
-def get_queue_length_current(checkpoint_id: str):
+def get_queue_length_current(checkpoint_id: str, utc_offset_hours: int = 3):
     try:
         url = "https://belarusborder.by/info/checkpoint?token=bts47d5f-6420-4f74-8f78-42e8e4370cc4"
 
@@ -148,7 +146,11 @@ def get_queue_length_current(checkpoint_id: str):
                 countBus = cp['countBus']
                 countMotorcycle = cp['countMotorcycle']
         
-        return countCar, countTruck, countBus, countMotorcycle
+        # Get current timestamp with UTC offset
+        current_timestamp = datetime.now(timezone.utc) + timedelta(hours=utc_offset_hours)
+        current_timestamp = current_timestamp.strftime('%Y-%m-%d %H:%M')
+
+        return countCar, countTruck, countBus, countMotorcycle, current_timestamp
         
     except Exception as e:
         print(f"Error: {e}")
