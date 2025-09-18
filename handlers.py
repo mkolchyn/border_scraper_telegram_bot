@@ -1,4 +1,5 @@
 import re
+from datetime import datetime, timezone, timedelta
 from multiprocessing import Process
 from telegram import InlineKeyboardMarkup, InputMediaPhoto, Update
 from telegram.constants import ParseMode
@@ -113,6 +114,16 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return
 
+    elif data == "stats_back":
+        await query.message.delete()
+        await query.message.chat.send_message(
+            STATS[user_lang]["welcome"],
+            reply_markup=InlineKeyboardMarkup(build_stats_menu(user_lang)),
+            parse_mode=ParseMode.HTML,
+            disable_web_page_preview=True
+        )
+        return
+
     elif data == "estimations":
         await query.edit_message_text(
             ESTIMATIONS[user_lang]["choose_border_point"],
@@ -174,9 +185,16 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         if car_info:
             buffer_zone_name, regnum, order_id, registration_date, status = car_info
+            # calculate how long the car has been in the queue
+            registration_date_tz = datetime.strptime(registration_date, "%H:%M:%S %d.%m.%Y").replace(tzinfo=timezone.utc)
+            current_timestamp = datetime.now(timezone.utc) + timedelta(hours=3)
+            time_in_queue = current_timestamp - registration_date_tz
+            time_in_queue_hours = time_in_queue.total_seconds() // 3600
+            time_in_queue_minutes = round((time_in_queue.total_seconds() % 3600) // 60, 0)
             if status == 3:
                 await query.edit_message_text(
-                    CARTRACKING[user_lang]["car_summoned_short"].format(plate),
+                    CARTRACKING[user_lang]["car_summoned_short"].format(plate) + "\n" +
+                    CARTRACKING[user_lang]["car_time_in_queue"].format(int(time_in_queue_hours), int(time_in_queue_minutes)),
                     reply_markup=InlineKeyboardMarkup(build_car_tracking_menu(query, car_type, user_lang)),
                     parse_mode="HTML"
                 )
@@ -184,7 +202,8 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             else:
                 await query.edit_message_text(
                     CARTRACKING[user_lang]["car_found_in_queue"].format(plate) + "\n" +
-                    CARTRACKING[user_lang]["car_status_details"].format(buffer_zone_name.capitalize(), regnum, order_id, registration_date),
+                    CARTRACKING[user_lang]["car_status_details"].format(buffer_zone_name.capitalize(), regnum, order_id, registration_date) + "\n" +
+                    CARTRACKING[user_lang]["car_time_in_queue"].format(int(time_in_queue_hours), int(time_in_queue_minutes)),
                     reply_markup=InlineKeyboardMarkup(build_car_tracking_menu(query, car_type, user_lang)),
                     parse_mode="HTML"
             )
@@ -384,16 +403,16 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif data in CALLBACK_MAP_CURRENT:
         checkpoint_id, border_points_names = CALLBACK_MAP_CURRENT[data]
-        countCar, countTruck, countBus, countMotorcycle = get_queue_length_current(checkpoint_id)
+        countCar, countTruck, countBus, countMotorcycle, current_timestamp = get_queue_length_current(checkpoint_id)
 
         if border_points_names in ("benyakoni", "kamenny_log", "grigorovschina"):
-            message = ESTIMATIONS[user_lang]["border_points_names"][border_points_names] + "\n\n"
+            message = ESTIMATIONS[user_lang]["border_points_names"][border_points_names] + "\n" + current_timestamp + "\n\n"
             message += f"🚗 {countCar}    🚚 {countTruck}    🚌 {countBus}    🏍️ {countMotorcycle}\n\n"
         elif border_points_names in ("brest_bts"):
-            message = ESTIMATIONS[user_lang]["border_points_names"][border_points_names] + "\n\n"
+            message = ESTIMATIONS[user_lang]["border_points_names"][border_points_names] + "\n" + current_timestamp + "\n\n"
             message += f"🚗 {countCar}    🚌 {countBus}    🏍️ {countMotorcycle}\n\n"
         elif border_points_names in ("kozlovichi"):
-            message = ESTIMATIONS[user_lang]["border_points_names"][border_points_names] + "\n\n"
+            message = ESTIMATIONS[user_lang]["border_points_names"][border_points_names] + "\n" + current_timestamp + "\n\n"
             message += f"🚚 {countTruck}"
 
         await query.edit_message_text(

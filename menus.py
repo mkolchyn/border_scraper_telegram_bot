@@ -48,6 +48,7 @@ def build_country_menu(country: str, lang: str):
         [InlineKeyboardButton(BUTTONS[lang]["7d"], callback_data=f"{country[:2]}_7d"),
          InlineKeyboardButton(BUTTONS[lang]["30d"], callback_data=f"{country[:2]}_30d")],
         [InlineKeyboardButton(BUTTONS[lang]["archive"], callback_data=f"{country}_archive")],
+        [InlineKeyboardButton(BUTTONS[lang]["stats_back"], callback_data="stats_back")],
         [InlineKeyboardButton(BUTTONS[lang]["menu"], callback_data="menu")],
     ]
 

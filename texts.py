@@ -10,17 +10,23 @@ MAIN_MENU = {
     "en": {
         "welcome": (
             "<b>Welcome to the Border Queue Bot!</b> 👋\n\n"
-            "Here you can track border crossing queues from <b>Belarus ➝ EU</b> in real time, "
-            "view historical statistics, and estimate the speed of passing through.\n\n"
-            "➡️ Choose an option below to get started:"
+            "Here you can track queues at border crossing points from <b>Belarus ➝ EU</b>:\n"
+            "• in real-time;\n"
+            "• view historical statistics;\n"
+            "• estimate border crossing speed;\n"
+            "• receive notifications for your saved cars.\n\n"
+            "➡️ <i>Choose an option below to get started:</i>"
         )
     },
     "ru": {
         "welcome": (
             "<b>Добро пожаловать в бота Очереди на границе!</b> 👋\n\n"
-            "Здесь вы можете отслеживать очереди на границе из <b>Беларуси ➝ ЕС</b> в реальном времени, "
-            "смотреть историческую статистику и оценивать скорость прохождения границы.\n\n"
-            "➡️ Выберите действие ниже, чтобы начать:"
+            "Здесь вы можете отслеживать очереди на границе из <b>Беларуси ➝ ЕС</b>:\n"
+            "• в реальном времени;\n"
+            "• смотреть историческую статистику;\n"
+            "• оценивать скорость прохождения границы;\n"
+            "• получать уведомления по сохраненным машинам.\n\n"
+            "➡️ <i>Выберите действие ниже, чтобы начать:</i>"
         )
     }   
 }
@@ -174,11 +180,11 @@ ESTIMATIONS = {
             "grigorovschina": 4,
         },
         "border_points_names": {
-            "benyakoni": "Benyakoni",
-            "brest_bts": "Brest BTS (\"Varshavskiy Most\")",
-            "kamenny_log": "Kamenny Log",
-            "grigorovschina": "Grigorovschina",
-            "kozlovichi": "Kozlovichi",
+            "benyakoni": "<b>Benyakoni</b>",
+            "brest_bts": "<b>Brest BTS (\"Varshavskiy Most\")</b>",
+            "kamenny_log": "<b>Kamenny Log</b>",
+            "grigorovschina": "<b>Grigorovschina</b>",
+            "kozlovichi": "<b>Kozlovichi</b>",
         }
     },
     "ru": {
@@ -207,11 +213,11 @@ ESTIMATIONS = {
             "grigorovschina": 4,
         },
         "border_points_names": {
-            "benyakoni": "Бенякони",
-            "brest_bts": "Брест БТС (\"Варшавский мост\")",
-            "kamenny_log": "Каменный Лог",
-            "grigorovschina": "Григоровщина",
-            "kozlovichi": "Козловичи",
+            "benyakoni": "<b>Бенякони</b>",
+            "brest_bts": "<b>Брест БТС (\"Варшавский мост\")</b>",
+            "kamenny_log": "<b>Каменный Лог</b>",
+            "grigorovschina": "<b>Григоровщина</b>",
+            "kozlovichi": "<b>Козловичи</b>",
         }
     }   
 }
@@ -233,11 +239,11 @@ CARTRACKING = {
         ),
         "car_added": (
             "<b>✅ Car Added</b>\n\n"
-            "The car with license plate <code>{}</code> has been added for tracking."
+            "The car with license plate <b>{}</b> has been added for tracking."
         ),
         "car_removed": (
             "<b>✅ Car Removed</b>\n\n"
-            "The car with license plate <code>{}</code> has been removed from tracking."
+            "The car with license plate <b>{}</b> has been removed from tracking."
         ),
         "car_added_error": (
             "❌ Invalid plate format.\n\n"
@@ -258,6 +264,9 @@ CARTRACKING = {
             "• License Plate: <b>{}</b>\n"
             "• Position in Queue: <b>{}</b>\n"
             "• Registered: <b>{}</b>\n"
+        ),
+        "car_time_in_queue": (
+            "Time in Queue: <b>{}</b> hours and <>b{}</b> minutes"
         ),
         "car_notification_settings": (
             "<b>Notification settings for car <code>{}</code></b>"
@@ -322,11 +331,11 @@ CARTRACKING = {
         ),
         "car_added": (
             "<b>✅ Машина добавлена</b>\n\n"
-            "Машина с номером <code>{}</code> была добавлена для отслеживания."
+            "Машина с номером <b>{}</b> была добавлена для отслеживания."
         ),
         "car_removed": (
             "<b>✅ Машина удалена</b>\n\n"
-            "Машина с номером <code>{}</code> была удалена из отслеживания."
+            "Машина с номером <b>{}</b> была удалена из отслеживания."
         ),
         "car_added_error": (
             "❌ Неверный формат номера.\n\n"
@@ -347,6 +356,9 @@ CARTRACKING = {
             "• Номерной знак: <b>{}</b>\n"
             "• Позиция в очереди: <b>{}</b>\n"
             "• Зарегистрирован: <b>{}</b>\n"
+        ),
+        "car_time_in_queue": (
+            "Время в очереди: <b>{}</b> часов и <b>{}</b> минут"
         ),
         "car_notification_settings": (
             "<b>Настройки уведомлений для машины <code>{}</code></b>"
@@ -401,6 +413,7 @@ BUTTONS = {
     "en": {
         "current": "Current queue info",
         "stats":"Historical queue data",
+        "stats_back": "🔙 Historical queue data",
         "estimations": "Estimate border speed",
         "country_lt": "Lithuania 🇱🇹",
         "country_lv": "Latvia 🇱🇻",
@@ -453,6 +466,7 @@ BUTTONS = {
     "ru": {
         "current": "Актуальная информация",
         "stats":"Исторические данные",
+        "stats_back": "🔙 Исторические данные",
         "estimations": "Оценить скорость границы",
         "country_lt": "Литва 🇱🇹",
         "country_lv": "Латвия 🇱🇻",
@@ -482,7 +496,7 @@ BUTTONS = {
         "october": "Октябрь",
         "november": "Ноябрь",
         "december": "Декабрь",
-        "car_tracking": "Сохраненные машины",
+        "car_tracking": "Отслеживание сохраненных машин",
         "car_tracking_back": "🔙 Сохраненные машины",
         "car_type_passenger": "Легковая 🚗",
         "car_type_freight": "Грузовая 🚚",
