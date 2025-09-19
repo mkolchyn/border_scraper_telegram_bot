@@ -37,7 +37,8 @@ from user_utils import (
     remove_all_user_car_notifications_from_db,
     remove_user_car_notification_from_db,
     deactivate_user_car_notification_in_db,
-    activate_user_car_notification_in_db
+    activate_user_car_notification_in_db,
+    car_time_in_queue_message
 
 )
 from db_functions import (
@@ -186,15 +187,12 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if car_info:
             buffer_zone_name, regnum, order_id, registration_date, status = car_info
             # calculate how long the car has been in the queue
-            registration_date_tz = datetime.strptime(registration_date, "%H:%M:%S %d.%m.%Y").replace(tzinfo=timezone.utc)
-            current_timestamp = datetime.now(timezone.utc) + timedelta(hours=3)
-            time_in_queue = current_timestamp - registration_date_tz
-            time_in_queue_hours = time_in_queue.total_seconds() // 3600
-            time_in_queue_minutes = round((time_in_queue.total_seconds() % 3600) // 60, 0)
+            car_time_in_queue = car_time_in_queue_message(registration_date, user_lang)
+
             if status == 3:
                 await query.edit_message_text(
                     CARTRACKING[user_lang]["car_summoned_short"].format(plate) + "\n" +
-                    CARTRACKING[user_lang]["car_time_in_queue"].format(int(time_in_queue_hours), int(time_in_queue_minutes)),
+                    car_time_in_queue,
                     reply_markup=InlineKeyboardMarkup(build_car_tracking_menu(query, car_type, user_lang)),
                     parse_mode="HTML"
                 )
@@ -203,7 +201,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 await query.edit_message_text(
                     CARTRACKING[user_lang]["car_found_in_queue"].format(plate) + "\n" +
                     CARTRACKING[user_lang]["car_status_details"].format(buffer_zone_name.capitalize(), regnum, order_id, registration_date) + "\n" +
-                    CARTRACKING[user_lang]["car_time_in_queue"].format(int(time_in_queue_hours), int(time_in_queue_minutes)),
+                    car_time_in_queue,
                     reply_markup=InlineKeyboardMarkup(build_car_tracking_menu(query, car_type, user_lang)),
                     parse_mode="HTML"
             )

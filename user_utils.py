@@ -8,6 +8,7 @@ import time
 import httpx
 from io import BytesIO
 import requests
+from texts import CARTRACKING
 import os
 from dotenv import load_dotenv
 
@@ -376,3 +377,53 @@ def get_user_car_types_from_db(user_id: int, car: str):
         return car_types[0] if car_types else None  # Extract car_type from tuples
     finally:
         session.close()
+
+def car_time_in_queue_message(registration_date, user_lang):
+    """Calculate time in queue and return formatted message."""
+    tz_minsk = timezone(timedelta(hours=3))
+    registration_date_tz = datetime.strptime(registration_date, "%H:%M:%S %d.%m.%Y").replace(tzinfo=tz_minsk)
+    current_timestamp = datetime.now(tz_minsk)
+    time_in_queue = current_timestamp - registration_date_tz
+    hours, remainder = divmod(int(time_in_queue.total_seconds()), 3600)
+    minutes = remainder // 60
+
+    if user_lang == "en":
+        if hours > 0:
+            if hours >= 24:
+                days = hours // 24
+                hours = hours % 24
+                return CARTRACKING[user_lang]["car_time_in_queue_days"].format(days, hours, minutes)
+            else:
+                return CARTRACKING[user_lang]["car_time_in_queue_hours"].format(hours, minutes)
+        else:
+            return CARTRACKING[user_lang]["car_time_in_queue_minutes"].format(minutes)
+        
+    elif user_lang == "ru":
+        day_word = plural_form(hours // 24, ("день", "дня", "дней"))
+        hour_word = plural_form(hours % 24, ("час", "часа", "часов"))
+        minute_word = plural_form(minutes, ("минута", "минуты", "минут"))
+        if hours > 0:
+            if hours >= 24:
+                days = hours // 24
+                hours = hours % 24
+                return CARTRACKING[user_lang]["car_time_in_queue_days"].format(days, day_word, hours, hour_word, minutes, minute_word)
+            else:
+                return CARTRACKING[user_lang]["car_time_in_queue_hours"].format(hours, hour_word, minutes, minute_word)
+        else:
+            return CARTRACKING[user_lang]["car_time_in_queue_minutes"].format(minutes, minute_word)
+
+def plural_form(number: int, forms: tuple[str, str, str]) -> str:
+    """
+    Возвращает правильную форму слова.
+    forms = ("час", "часа", "часов") или ("минута", "минуты", "минут")
+    """
+    number = abs(number) % 100
+    if 11 <= number <= 19:
+        return forms[2]
+    i = number % 10
+    if i == 1:
+        return forms[0]
+    elif 2 <= i <= 4:
+        return forms[1]
+    else:
+        return forms[2]
