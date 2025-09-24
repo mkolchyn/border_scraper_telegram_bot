@@ -24,6 +24,17 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./db:/docker-entrypoint-initdb.d
+      - ./db_backup/backups:/backups
+
+  db_backup:
+    build: ./db_backup
+    container_name: border_scraper_telegram_db_backup
+    restart: always
+    volumes:
+      - .env:/etc/environment:ro
+      - .${BACKUP_DIR}:/backups
+    depends_on:
+      - db
 
 volumes:
   postgres_data:
