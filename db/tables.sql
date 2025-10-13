@@ -22,11 +22,11 @@ CREATE TABLE IF NOT EXISTS user_actions (
 
 -- Notifications table
 CREATE TABLE IF NOT EXISTS user_notification (
-    id SERIAL PRIMARY KEY,
+    surr_id SERIAL PRIMARY KEY,
     telegram_id BIGINT NOT NULL,
     car_plate VARCHAR(20) NOT NULL,
     notification_type VARCHAR(50) NOT NULL,
-    notification_value int(10),
+    notification_value int,
     notification_status BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     changed_at TIMESTAMP NOT NULL DEFAULT NOW()
