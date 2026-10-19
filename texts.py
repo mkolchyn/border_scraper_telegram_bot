@@ -512,7 +512,8 @@ BUTTONS = {
         "set_notification_type_every_n_minutes": "Every 'N' minutes",
         "set_notification_type_every_n_cars": "Every 'N' cars",
         "set_notification_type_summoned": "Summoned to checkpoint",
-        "selected_car_settings": "🔙 Selected car settings"
+        "selected_car_settings": "🔙 Selected car settings",
+        "queue_notifications_back": "🔙 Queue notifications"
     },
     "ru": {
         "current": "Актуальная информация",
@@ -568,6 +569,6 @@ BUTTONS = {
         "set_notification_type_every_n_cars": "Интервал машин",
         "set_notification_type_summoned": "Вызов на контроль",
         "selected_car_settings": "🔙 Настройки выбранной машины",
-
+        "queue_notifications_back": "🔙 Уведомления о состоянии очереди"
     }
 }
