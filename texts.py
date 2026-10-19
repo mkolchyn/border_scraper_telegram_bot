@@ -237,7 +237,8 @@ NOTIFICATIONS = {
             "Please enter the queue length.\n\n"
             "For example, if you want to receive notifications when the queue length reaches 100 cars,\n"
             "please enter <b>100</b>."
-        )
+        ),
+        "queue_length_set": "Queue length set to <b>{}</b> cars. You will receive notifications when the queue reaches this length."
     },
     "ru": {
         "notifications_welcome": (
@@ -253,7 +254,8 @@ NOTIFICATIONS = {
             "Пожалуйста, введите длину очереди.\n\n"
             "Например, если вы хотите получать уведомления, когда длина очереди достигнет 100 машин,\n"
             "введите <b>100</b>."
-        )
+        ),
+        "queue_length_set": "Длина очереди установлена на <b>{}</b> машин. Вы будете получать уведомления, когда очередь достигнет этой длины."
     }
 }
 
@@ -566,6 +568,6 @@ BUTTONS = {
         "set_notification_type_every_n_cars": "Интервал машин",
         "set_notification_type_summoned": "Вызов на контроль",
         "selected_car_settings": "🔙 Настройки выбранной машины",
-        
+
     }
 }

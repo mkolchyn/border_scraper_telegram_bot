@@ -151,10 +151,11 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return
 
-    elif data.startswith("queue_"):
-        border_point = data.split("_", 2)[2]
+    elif data.startswith("queue_length_"):
+        border_point = data.removeprefix("queue_length_")
         # Store selected border point in user_data for later use
         context.user_data["border_point"] = border_point
+        context.user_data["expecting_plate"] = False
         await query.edit_message_text(
             NOTIFICATIONS[user_lang]["expecting_queue_length"],
             parse_mode=ParseMode.HTML
@@ -192,6 +193,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         # Mark that next text from this user should be treated as a plate number
         context.user_data["expecting_plate"] = True
+        context.user_data["expecting_queue_length"] = False
         return
     
     elif data.startswith("remove_car"):
@@ -458,6 +460,15 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.edit_message_text(STATS[user_lang]["goodbye"])
     else:
         await query.edit_message_text(f"You selected: {data.capitalize()}")
+
+
+async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Route free-text input to the flow the user is currently in."""
+    if context.user_data.get("expecting_queue_length"):
+        await handle_queue_length(update, context)
+    elif context.user_data.get("expecting_plate"):
+        await handle_plate(update, context)
+
 
 async def handle_plate(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not context.user_data.get("expecting_plate"):
