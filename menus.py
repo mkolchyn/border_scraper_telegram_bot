@@ -11,7 +11,7 @@ def build_main_menu(lang: str):
         [InlineKeyboardButton(BUTTONS[lang]["current"], callback_data="current")],
         [InlineKeyboardButton(BUTTONS[lang]["stats"], callback_data="stats")],
         [InlineKeyboardButton(BUTTONS[lang]["estimations"], callback_data="estimations")],
-        [InlineKeyboardButton(BUTTONS[lang]["car_tracking"], callback_data="car_tracking")],
+        [InlineKeyboardButton(BUTTONS[lang]["notifications"], callback_data="notifications")],
     ]
 
 def build_current_menu(lang: str):
@@ -38,6 +38,13 @@ def build_estimations_menu(lang: str):
         [InlineKeyboardButton(BUTTONS[lang]["benyakoni"], callback_data="benyakoni")],
         [InlineKeyboardButton(BUTTONS[lang]["brest_bts"], callback_data="brest_bts")],
         [InlineKeyboardButton(BUTTONS[lang]["grigorovschina"], callback_data="grigorovschina")],
+        [InlineKeyboardButton(BUTTONS[lang]["menu"], callback_data="menu")],
+    ]
+
+def build_notifications_menu(lang: str):
+    return [
+        [InlineKeyboardButton(BUTTONS[lang]["queue_notifications"], callback_data="queue_notifications")],
+        [InlineKeyboardButton(BUTTONS[lang]["car_tracking"], callback_data="car_tracking")],
         [InlineKeyboardButton(BUTTONS[lang]["menu"], callback_data="menu")],
     ]
 
