@@ -7,7 +7,7 @@ from telegram.ext import (
     MessageHandler, 
     filters
 )
-from handlers import start, restart, menu, button_handler, handle_plate
+from handlers import handle_queue_length, start, restart, menu, button_handler, handle_plate
 from user_utils import get_all_active_user_car_notifications_from_db, get_user_lang, get_user_car_types_from_db
 from tracking_car import track_user_car
 from multiprocessing import Process
@@ -33,6 +33,7 @@ def main():
     app.add_handler(CommandHandler("menu", menu))
     app.add_handler(CallbackQueryHandler(button_handler))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_plate))
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_queue_length))
     app.run_polling()
 
 if __name__ == "__main__":

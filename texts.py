@@ -222,6 +222,41 @@ ESTIMATIONS = {
     }   
 }
 
+NOTIFICATIONS = {
+    "en": {
+        "notifications_welcome": (
+            "Welcome to the Queue Notifications Management\n\n"
+            "Here you can manage your notifications related to the queue status and your cars.\n"
+            "Choose an option below:"
+        ),
+        "notifications_queue": (
+            "Here you can manage your notifications related to the queue status.\n"
+            "➡️ <i>Choose a border crossing point:</i>"
+        ),
+        "expecting_queue_length": (
+            "Please enter the queue length.\n\n"
+            "For example, if you want to receive notifications when the queue length reaches 100 cars,\n"
+            "please enter <b>100</b>."
+        )
+    },
+    "ru": {
+        "notifications_welcome": (
+            "Добро пожаловать в управление уведомлениями о состоянии очереди\n\n"
+            "Здесь вы можете управлять своими уведомлениями, связанными с состоянием очереди и вашими автомобилями.\n"
+            "Выберите вариант ниже:"
+        ),
+        "notifications_queue": (
+            "Здесь вы можете управлять своими уведомлениями, связанными с состоянием очереди.\n"
+            "➡️ <i>Выберите пограничный пункт:</i>"
+        ),
+        "expecting_queue_length": (
+            "Пожалуйста, введите длину очереди.\n\n"
+            "Например, если вы хотите получать уведомления, когда длина очереди достигнет 100 машин,\n"
+            "введите <b>100</b>."
+        )
+    }
+}
+
 CARTRACKING = {
     "en": {
         "car_tracking_intro": (
@@ -530,6 +565,7 @@ BUTTONS = {
         "set_notification_type_every_n_minutes": "Интервал времени",
         "set_notification_type_every_n_cars": "Интервал машин",
         "set_notification_type_summoned": "Вызов на контроль",
-        "selected_car_settings": "🔙 Настройки выбранной машины"
+        "selected_car_settings": "🔙 Настройки выбранной машины",
+        
     }
 }

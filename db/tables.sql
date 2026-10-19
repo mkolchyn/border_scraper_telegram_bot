@@ -45,8 +45,8 @@ CREATE TABLE IF NOT EXISTS user_cars (
 CREATE TABLE IF NOT EXISTS queue_notifications (
     surr_id SERIAL PRIMARY KEY,
     telegram_id BIGINT NOT NULL,
-    notification_type VARCHAR(50) NOT NULL,
-    notification_value int,
+    buffer_zone VARCHAR(50) NOT NULL,
+    queue_length int NOT NULL,
     notification_status BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     changed_at TIMESTAMP NOT NULL DEFAULT NOW()

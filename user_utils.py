@@ -2,7 +2,7 @@ from telegram import User, InputMediaPhoto, InlineKeyboardMarkup
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from db_functions import get_local_session
-from models import DBUser, UserAction, UserNotification, UserCars
+from models import DBUser, QueueNotification, UserAction, UserNotification, UserCars
 from datetime import datetime, timezone, timedelta
 import time
 import httpx
@@ -266,6 +266,24 @@ def set_user_car_notification_in_db(user_id: int, car: str, notification_type: s
     finally:
         session.close()
 
+def set_user_queue_notification_in_db(user_id: int, buffer_zone: str, queue_length: int):
+    """Set a queue length notification for a user."""
+    session = get_local_session()
+    try:
+        new_notification = QueueNotification(
+            telegram_id=user_id,
+            buffer_zone=buffer_zone,
+            queue_length=queue_length
+        )
+        session.add(new_notification)
+        session.commit()
+
+    except Exception as e:
+        session.rollback()
+        print(f"Error saving queue notification: {e}")
+    finally:
+        session.close()
+
 def get_user_car_notifications_from_db(user_id: int, car: str, notification_type: str = None, notification_value: int = None):
     """Fetch notifications for a user's specific car, optionally filtered by type and value."""
     session = get_local_session()
@@ -279,6 +297,20 @@ def get_user_car_notifications_from_db(user_id: int, car: str, notification_type
             query = query.filter_by(notification_value=notification_value)
 
         return query.all()
+    finally:
+        session.close()
+
+def get_user_queue_notifications_from_db(user_id: int, buffer_zone: str):
+    """Fetch queue length notifications for a user for a specific buffer zone."""
+    session = get_local_session()
+    try:
+        if not buffer_zone:
+            notifications = session.query(QueueNotification)\
+                .filter_by(telegram_id=user_id).all()
+        elif buffer_zone:
+            notifications = session.query(QueueNotification)\
+                .filter_by(telegram_id=user_id, buffer_zone=buffer_zone).all()
+        return notifications
     finally:
         session.close()
 

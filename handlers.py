@@ -4,12 +4,13 @@ from multiprocessing import Process
 from telegram import InlineKeyboardMarkup, InputMediaPhoto, Update
 from telegram.constants import ParseMode
 from telegram.ext import ContextTypes
-from texts import MAIN_MENU, STATS, CURRENT, ESTIMATIONS, CARTRACKING, language_menu
+from texts import MAIN_MENU, NOTIFICATIONS, STATS, CURRENT, ESTIMATIONS, CARTRACKING, language_menu
 from tracking_car import track_user_car
 from menus import (
     build_car_tracking_menu_only,  
     build_main_menu, 
-    build_current_menu, 
+    build_current_menu,
+    build_queue_notifications_menu, 
     build_stats_menu, 
     build_car_tracking_menu, 
     build_car_type_menu,
@@ -21,7 +22,8 @@ from menus import (
     build_notification_type_menu,
     build_notification_number_in_queue_menu,
     build_notification_every_n_minutes_menu,
-    build_notification_every_n_cars_menu
+    build_notification_every_n_cars_menu,
+    build_notifications_menu
 )
 from user_utils import (
     log_user_action, 
@@ -38,7 +40,8 @@ from user_utils import (
     remove_user_car_notification_from_db,
     deactivate_user_car_notification_in_db,
     activate_user_car_notification_in_db,
-    car_time_in_queue_message
+    car_time_in_queue_message,
+    set_user_queue_notification_in_db
 
 )
 from db_functions import (
@@ -130,6 +133,33 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             ESTIMATIONS[user_lang]["choose_border_point"],
             reply_markup=InlineKeyboardMarkup(build_estimations_menu(user_lang))
         )
+        return
+
+    elif data == "notifications":
+        await query.edit_message_text(
+            NOTIFICATIONS[user_lang]["notifications_welcome"],
+            reply_markup=InlineKeyboardMarkup(build_notifications_menu(user_lang))
+        )
+        return
+
+    elif data == "queue_notifications":
+        await query.edit_message_text(
+            NOTIFICATIONS[user_lang]["notifications_queue"],
+            reply_markup=InlineKeyboardMarkup(build_queue_notifications_menu(user_lang)),
+            parse_mode=ParseMode.HTML
+        )
+        return
+
+    elif data.startswith("queue_"):
+        border_point = data.split("_", 2)[2]
+        # Store selected border point in user_data for later use
+        context.user_data["border_point"] = border_point
+        await query.edit_message_text(
+            NOTIFICATIONS[user_lang]["expecting_queue_length"],
+            parse_mode=ParseMode.HTML
+        )
+        # Mark that next number from this user should be treated as a length in queue for notifications
+        context.user_data["expecting_queue_length"] = True
         return
 
     elif data == "car_tracking":
@@ -452,4 +482,31 @@ async def handle_plate(update: Update, context: ContextTypes.DEFAULT_TYPE):
             CARTRACKING[user_lang]["car_added_error"],
             reply_markup=InlineKeyboardMarkup(build_car_tracking_menu(update.message, car_type, user_lang)),
             parse_mode="HTML"
+        )
+
+async def handle_queue_length(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not context.user_data.get("expecting_queue_length"):
+        return  # ignore text not related to queue notification flow
+
+    user_id = update.message.from_user.id
+    user_lang = get_user_lang(user_id)
+    buffer_zone = context.user_data.get("border_point")
+    text = update.message.text.strip()
+
+    if text.isdigit() and 1 <= int(text) <= 3000:
+        queue_length = int(text)
+        # Save the queue_length to the database for this user
+        set_user_queue_notification_in_db(user_id, buffer_zone, queue_length)
+
+        await update.message.reply_text(
+            NOTIFICATIONS[user_lang]["queue_length_set"].format(queue_length),
+            reply_markup=InlineKeyboardMarkup(build_queue_tracking_menu(update.message, buffer_zone, user_lang)),
+            parse_mode=ParseMode.HTML
+        )
+        
+        context.user_data["expecting_queue_length"] = False
+    else:
+        await update.message.reply_text(
+            NOTIFICATIONS[user_lang]["expecting_queue_length"],
+            parse_mode=ParseMode.HTML
         )
