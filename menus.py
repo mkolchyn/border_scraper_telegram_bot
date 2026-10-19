@@ -51,11 +51,11 @@ def build_notifications_menu(lang: str):
 
 def build_queue_notifications_menu(lang: str):
     return [
-        [InlineKeyboardButton(BUTTONS[lang]["kamenny_log"], callback_data="queue_kamenny_log")],
-        [InlineKeyboardButton(BUTTONS[lang]["benyakoni"], callback_data="queue_benyakoni")],
-        [InlineKeyboardButton(BUTTONS[lang]["brest_bts"], callback_data="queue_brest_bts")],
-        [InlineKeyboardButton(BUTTONS[lang]["kozlovichi"], callback_data="queue_kozlovichi")],
-        [InlineKeyboardButton(BUTTONS[lang]["grigorovschina"], callback_data="queue_grigorovschina")],
+        [InlineKeyboardButton(BUTTONS[lang]["kamenny_log"], callback_data="queue_length_kamenny_log")],
+        [InlineKeyboardButton(BUTTONS[lang]["benyakoni"], callback_data="queue_length_benyakoni")],
+        [InlineKeyboardButton(BUTTONS[lang]["brest_bts"], callback_data="queue_length_brest_bts")],
+        [InlineKeyboardButton(BUTTONS[lang]["kozlovichi"], callback_data="queue_length_kozlovichi")],
+        [InlineKeyboardButton(BUTTONS[lang]["grigorovschina"], callback_data="queue_length_grigorovschina")],
         [InlineKeyboardButton(BUTTONS[lang]["menu"], callback_data="menu")],
     ]
 
