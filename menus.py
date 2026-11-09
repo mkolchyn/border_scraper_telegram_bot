@@ -2,7 +2,8 @@ from telegram import InlineKeyboardButton
 from texts import BUTTONS
 from user_utils import (
     get_user_cars_from_db,
-    get_user_car_notifications_from_db
+    get_user_car_notifications_from_db,
+    get_user_queue_notifications_from_db
 )
 
 
@@ -11,7 +12,7 @@ def build_main_menu(lang: str):
         [InlineKeyboardButton(BUTTONS[lang]["current"], callback_data="current")],
         [InlineKeyboardButton(BUTTONS[lang]["stats"], callback_data="stats")],
         [InlineKeyboardButton(BUTTONS[lang]["estimations"], callback_data="estimations")],
-        [InlineKeyboardButton(BUTTONS[lang]["car_tracking"], callback_data="car_tracking")],
+        [InlineKeyboardButton(BUTTONS[lang]["notifications"], callback_data="notifications")],
     ]
 
 def build_current_menu(lang: str):
@@ -38,6 +39,23 @@ def build_estimations_menu(lang: str):
         [InlineKeyboardButton(BUTTONS[lang]["benyakoni"], callback_data="benyakoni")],
         [InlineKeyboardButton(BUTTONS[lang]["brest_bts"], callback_data="brest_bts")],
         [InlineKeyboardButton(BUTTONS[lang]["grigorovschina"], callback_data="grigorovschina")],
+        [InlineKeyboardButton(BUTTONS[lang]["menu"], callback_data="menu")],
+    ]
+
+def build_notifications_menu(lang: str):
+    return [
+        [InlineKeyboardButton(BUTTONS[lang]["queue_notifications"], callback_data="queue_notifications")],
+        [InlineKeyboardButton(BUTTONS[lang]["car_tracking"], callback_data="car_tracking")],
+        [InlineKeyboardButton(BUTTONS[lang]["menu"], callback_data="menu")],
+    ]
+
+def build_queue_notifications_menu(lang: str):
+    return [
+        [InlineKeyboardButton(BUTTONS[lang]["kamenny_log"], callback_data="queue_length_kamenny_log")],
+        [InlineKeyboardButton(BUTTONS[lang]["benyakoni"], callback_data="queue_length_benyakoni")],
+        [InlineKeyboardButton(BUTTONS[lang]["brest_bts"], callback_data="queue_length_brest_bts")],
+        [InlineKeyboardButton(BUTTONS[lang]["kozlovichi"], callback_data="queue_length_kozlovichi")],
+        [InlineKeyboardButton(BUTTONS[lang]["grigorovschina"], callback_data="queue_length_grigorovschina")],
         [InlineKeyboardButton(BUTTONS[lang]["menu"], callback_data="menu")],
     ]
 
@@ -129,6 +147,28 @@ def build_car_tracking_menu(query, car_type: str, lang: str):
     keyboard.append([InlineKeyboardButton(BUTTONS[lang]["car_tracking_back"], callback_data="car_tracking")])
     keyboard.append([InlineKeyboardButton(BUTTONS[lang]["menu"], callback_data="menu")])
         
+    return keyboard
+
+def build_queue_tracking_menu(query, buffer_zone: str, lang: str):
+    user_id = query.from_user.id
+    notifications = get_user_queue_notifications_from_db(user_id, buffer_zone)
+
+    keyboard = []
+    for notification in notifications:
+        if notification.notification_status:
+            status, command = "🔔", "qdisable"
+        else:
+            status, command = "🔕", "qenable"
+
+        keyboard.append([
+            InlineKeyboardButton(status, callback_data=f"{command}_{notification.surr_id}_{buffer_zone}"),
+            InlineKeyboardButton(str(notification.queue_length), callback_data="noop"),
+            InlineKeyboardButton(BUTTONS[lang]["remove_notification"], callback_data=f"remove_queue_notification_{notification.surr_id}_{buffer_zone}")
+        ])
+    if len(notifications) < 5:
+        keyboard.append([InlineKeyboardButton(BUTTONS[lang]["add_notification"], callback_data=f"add_queue_notification_{buffer_zone}")])
+    keyboard.append([InlineKeyboardButton(BUTTONS[lang]["queue_notifications_back"], callback_data="queue_notifications")])
+
     return keyboard
 
 def build_car_settings_menu(user_id, car: str, lang: str):

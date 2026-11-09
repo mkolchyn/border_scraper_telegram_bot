@@ -4,12 +4,14 @@ from multiprocessing import Process
 from telegram import InlineKeyboardMarkup, InputMediaPhoto, Update
 from telegram.constants import ParseMode
 from telegram.ext import ContextTypes
-from texts import MAIN_MENU, STATS, CURRENT, ESTIMATIONS, CARTRACKING, language_menu
+from texts import MAIN_MENU, NOTIFICATIONS, STATS, CURRENT, ESTIMATIONS, CARTRACKING, language_menu
 from tracking_car import track_user_car
 from menus import (
     build_car_tracking_menu_only,  
     build_main_menu, 
-    build_current_menu, 
+    build_current_menu,
+    build_queue_notifications_menu,
+    build_queue_tracking_menu, 
     build_stats_menu, 
     build_car_tracking_menu, 
     build_car_type_menu,
@@ -21,7 +23,8 @@ from menus import (
     build_notification_type_menu,
     build_notification_number_in_queue_menu,
     build_notification_every_n_minutes_menu,
-    build_notification_every_n_cars_menu
+    build_notification_every_n_cars_menu,
+    build_notifications_menu
 )
 from user_utils import (
     log_user_action, 
@@ -38,7 +41,11 @@ from user_utils import (
     remove_user_car_notification_from_db,
     deactivate_user_car_notification_in_db,
     activate_user_car_notification_in_db,
-    car_time_in_queue_message
+    car_time_in_queue_message,
+    set_user_queue_notification_in_db,
+    remove_user_queue_notification_from_db,
+    set_user_queue_notification_status_in_db,
+    get_user_queue_notifications_from_db
 
 )
 from db_functions import (
@@ -132,6 +139,62 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return
 
+    elif data == "notifications":
+        await query.edit_message_text(
+            NOTIFICATIONS[user_lang]["notifications_welcome"],
+            reply_markup=InlineKeyboardMarkup(build_notifications_menu(user_lang))
+        )
+        return
+
+    elif data == "queue_notifications":
+        await query.edit_message_text(
+            NOTIFICATIONS[user_lang]["notifications_queue"],
+            reply_markup=InlineKeyboardMarkup(build_queue_notifications_menu(user_lang)),
+            parse_mode=ParseMode.HTML
+        )
+        return
+
+    elif data.startswith("queue_length_"):
+        border_point = data.removeprefix("queue_length_")
+        await query.edit_message_text(
+            NOTIFICATIONS[user_lang]["queue_zone_menu"].format(ESTIMATIONS[user_lang]["border_points_names"][border_point]),
+            reply_markup=InlineKeyboardMarkup(build_queue_tracking_menu(query, border_point, user_lang)),
+            parse_mode=ParseMode.HTML
+        )
+        return
+
+    elif data.startswith("add_queue_notification_"):
+        border_point = data.removeprefix("add_queue_notification_")
+        if len(get_user_queue_notifications_from_db(query.from_user.id, border_point)) >= 5:
+            await query.edit_message_text(
+                NOTIFICATIONS[user_lang]["queue_limit_reached"],
+                reply_markup=InlineKeyboardMarkup(build_queue_tracking_menu(query, border_point, user_lang))
+            )
+            return
+        # Store selected border point; next number from this user is the queue threshold
+        context.user_data["border_point"] = border_point
+        context.user_data["expecting_plate"] = False
+        context.user_data["expecting_queue_length"] = True
+        await query.edit_message_text(
+            NOTIFICATIONS[user_lang]["expecting_queue_length"],
+            parse_mode=ParseMode.HTML
+        )
+        return
+
+    elif data.startswith(("remove_queue_notification_", "qenable_", "qdisable_")):
+        if data.startswith("remove_queue_notification_"):
+            surr_id, border_point = data.removeprefix("remove_queue_notification_").split("_", 1)
+            remove_user_queue_notification_from_db(int(surr_id), query.from_user.id)
+        else:
+            action, surr_id, border_point = data.split("_", 2)
+            set_user_queue_notification_status_in_db(int(surr_id), query.from_user.id, action == "qenable")
+        await query.edit_message_text(
+            NOTIFICATIONS[user_lang]["queue_zone_menu"].format(ESTIMATIONS[user_lang]["border_points_names"][border_point]),
+            reply_markup=InlineKeyboardMarkup(build_queue_tracking_menu(query, border_point, user_lang)),
+            parse_mode=ParseMode.HTML
+        )
+        return
+
     elif data == "car_tracking":
         await query.edit_message_text(
             CARTRACKING[user_lang]["car_type_tracking"],
@@ -161,6 +224,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         # Mark that next text from this user should be treated as a plate number
         context.user_data["expecting_plate"] = True
+        context.user_data["expecting_queue_length"] = False
         return
     
     elif data.startswith("remove_car"):
@@ -428,6 +492,15 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await query.edit_message_text(f"You selected: {data.capitalize()}")
 
+
+async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Route free-text input to the flow the user is currently in."""
+    if context.user_data.get("expecting_queue_length"):
+        await handle_queue_length(update, context)
+    elif context.user_data.get("expecting_plate"):
+        await handle_plate(update, context)
+
+
 async def handle_plate(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not context.user_data.get("expecting_plate"):
         return  # ignore text not related to add_car flow
@@ -452,4 +525,31 @@ async def handle_plate(update: Update, context: ContextTypes.DEFAULT_TYPE):
             CARTRACKING[user_lang]["car_added_error"],
             reply_markup=InlineKeyboardMarkup(build_car_tracking_menu(update.message, car_type, user_lang)),
             parse_mode="HTML"
+        )
+
+async def handle_queue_length(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not context.user_data.get("expecting_queue_length"):
+        return  # ignore text not related to queue notification flow
+
+    user_id = update.message.from_user.id
+    user_lang = get_user_lang(user_id)
+    buffer_zone = context.user_data.get("border_point")
+    text = update.message.text.strip()
+
+    if text.isdigit() and 1 <= int(text) <= 3000:
+        queue_length = int(text)
+        # Save the queue_length to the database for this user
+        set_user_queue_notification_in_db(user_id, buffer_zone, queue_length)
+
+        await update.message.reply_text(
+            NOTIFICATIONS[user_lang]["queue_length_set"].format(queue_length),
+            reply_markup=InlineKeyboardMarkup(build_queue_tracking_menu(update.message, buffer_zone, user_lang)),
+            parse_mode=ParseMode.HTML
+        )
+        
+        context.user_data["expecting_queue_length"] = False
+    else:
+        await update.message.reply_text(
+            NOTIFICATIONS[user_lang]["expecting_queue_length"],
+            parse_mode=ParseMode.HTML
         )

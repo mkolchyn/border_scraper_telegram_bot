@@ -7,10 +7,23 @@ from telegram.ext import (
     MessageHandler, 
     filters
 )
-from handlers import start, restart, menu, button_handler, handle_plate
-from user_utils import get_all_active_user_car_notifications_from_db, get_user_lang, get_user_car_types_from_db
+from handlers import (
+    handle_queue_length, 
+    handle_text, 
+    start, 
+    restart, 
+    menu, 
+    button_handler
+)
+from user_utils import (
+    get_all_active_user_car_notifications_from_db, 
+    get_user_lang, 
+    get_user_car_types_from_db
+)
 from tracking_car import track_user_car
 from multiprocessing import Process
+from threading import Thread
+from queue_checker import run_queue_checker
 
 load_dotenv()
 
@@ -27,12 +40,15 @@ def main():
         p = Process(target=track_user_car, args=(notification.surr_id, car_type, user_lang))
         p.start()
 
+    # Background checker for queue length notifications
+    Thread(target=run_queue_checker, daemon=True).start()
+
     app = ApplicationBuilder().token(TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("restart", restart))
     app.add_handler(CommandHandler("menu", menu))
     app.add_handler(CallbackQueryHandler(button_handler))
-    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_plate))
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text))
     app.run_polling()
 
 if __name__ == "__main__":

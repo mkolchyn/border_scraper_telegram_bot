@@ -222,6 +222,49 @@ ESTIMATIONS = {
     }   
 }
 
+NOTIFICATIONS = {
+    "en": {
+        "notifications_welcome": (
+            "Welcome to the Queue Notifications Management\n\n"
+            "Here you can manage your notifications related to the queue status and your cars.\n"
+            "Choose an option below:"
+        ),
+        "notifications_queue": (
+            "Here you can manage your notifications related to the queue status.\n"
+            "➡️ <i>Choose a border crossing point:</i>"
+        ),
+        "expecting_queue_length": (
+            "Please enter the queue length.\n\n"
+            "For example, if you want to receive notifications when the queue length reaches 100 cars,\n"
+            "please enter <b>100</b>."
+        ),
+        "queue_length_set": "Queue length set to <b>{}</b> cars. You will get one message when the queue reaches this length, then the notification will be turned off.",
+        "queue_zone_menu": "{}\n\nQueue notifications for this border point. 🔔 = on, 🔕 = off.",
+        "queue_limit_reached": "You can have at most 5 notifications per border point.",
+        "queue_notification_reached": "🔔 The queue at {} has reached <b>{}</b> (now: <b>{}</b>). This notification is now turned off."
+    },
+    "ru": {
+        "notifications_welcome": (
+            "Добро пожаловать в управление уведомлениями о состоянии очереди\n\n"
+            "Здесь вы можете управлять своими уведомлениями, связанными с состоянием очереди и вашими автомобилями.\n"
+            "Выберите вариант ниже:"
+        ),
+        "notifications_queue": (
+            "Здесь вы можете управлять своими уведомлениями, связанными с состоянием очереди.\n"
+            "➡️ <i>Выберите пограничный пункт:</i>"
+        ),
+        "expecting_queue_length": (
+            "Пожалуйста, введите длину очереди.\n\n"
+            "Например, если вы хотите получать уведомления, когда длина очереди достигнет 100 машин,\n"
+            "введите <b>100</b>."
+        ),
+        "queue_length_set": "Длина очереди установлена на <b>{}</b> машин. Вы получите одно сообщение, когда очередь достигнет этой длины, после чего уведомление отключится.",
+        "queue_zone_menu": "{}\n\nУведомления об очереди для этого пункта. 🔔 = включено, 🔕 = выключено.",
+        "queue_limit_reached": "Можно создать не более 5 уведомлений для одного пункта.",
+        "queue_notification_reached": "🔔 Очередь на пункте {} достигла <b>{}</b> (сейчас: <b>{}</b>). Уведомление отключено."
+    }
+}
+
 CARTRACKING = {
     "en": {
         "car_tracking_intro": (
@@ -426,6 +469,8 @@ BUTTONS = {
         "current": "Current queue info",
         "stats":"Historical queue data",
         "stats_back": "🔙 Historical queue data",
+        "notifications": "Manage notifications",
+        "queue_notifications": "Queue notifications",
         "estimations": "Estimate border speed",
         "country_lt": "Lithuania 🇱🇹",
         "country_lv": "Latvia 🇱🇻",
@@ -473,12 +518,15 @@ BUTTONS = {
         "set_notification_type_every_n_minutes": "Every 'N' minutes",
         "set_notification_type_every_n_cars": "Every 'N' cars",
         "set_notification_type_summoned": "Summoned to checkpoint",
-        "selected_car_settings": "🔙 Selected car settings"
+        "selected_car_settings": "🔙 Selected car settings",
+        "queue_notifications_back": "🔙 Queue notifications"
     },
     "ru": {
         "current": "Актуальная информация",
         "stats":"Исторические данные",
         "stats_back": "🔙 Исторические данные",
+        "notifications": "Управление уведомлениями",
+        "queue_notifications": "Уведомления о состоянии очереди",
         "estimations": "Оценить скорость границы",
         "country_lt": "Литва 🇱🇹",
         "country_lv": "Латвия 🇱🇻",
@@ -526,6 +574,7 @@ BUTTONS = {
         "set_notification_type_every_n_minutes": "Интервал времени",
         "set_notification_type_every_n_cars": "Интервал машин",
         "set_notification_type_summoned": "Вызов на контроль",
-        "selected_car_settings": "🔙 Настройки выбранной машины"
+        "selected_car_settings": "🔙 Настройки выбранной машины",
+        "queue_notifications_back": "🔙 Уведомления о состоянии очереди"
     }
 }
