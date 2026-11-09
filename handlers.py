@@ -42,7 +42,10 @@ from user_utils import (
     deactivate_user_car_notification_in_db,
     activate_user_car_notification_in_db,
     car_time_in_queue_message,
-    set_user_queue_notification_in_db
+    set_user_queue_notification_in_db,
+    remove_user_queue_notification_from_db,
+    set_user_queue_notification_status_in_db,
+    get_user_queue_notifications_from_db
 
 )
 from db_functions import (
@@ -153,15 +156,43 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif data.startswith("queue_length_"):
         border_point = data.removeprefix("queue_length_")
-        # Store selected border point in user_data for later use
+        await query.edit_message_text(
+            NOTIFICATIONS[user_lang]["queue_zone_menu"].format(ESTIMATIONS[user_lang]["border_points_names"][border_point]),
+            reply_markup=InlineKeyboardMarkup(build_queue_tracking_menu(query, border_point, user_lang)),
+            parse_mode=ParseMode.HTML
+        )
+        return
+
+    elif data.startswith("add_queue_notification_"):
+        border_point = data.removeprefix("add_queue_notification_")
+        if len(get_user_queue_notifications_from_db(query.from_user.id, border_point)) >= 5:
+            await query.edit_message_text(
+                NOTIFICATIONS[user_lang]["queue_limit_reached"],
+                reply_markup=InlineKeyboardMarkup(build_queue_tracking_menu(query, border_point, user_lang))
+            )
+            return
+        # Store selected border point; next number from this user is the queue threshold
         context.user_data["border_point"] = border_point
         context.user_data["expecting_plate"] = False
+        context.user_data["expecting_queue_length"] = True
         await query.edit_message_text(
             NOTIFICATIONS[user_lang]["expecting_queue_length"],
             parse_mode=ParseMode.HTML
         )
-        # Mark that next number from this user should be treated as a length in queue for notifications
-        context.user_data["expecting_queue_length"] = True
+        return
+
+    elif data.startswith(("remove_queue_notification_", "qenable_", "qdisable_")):
+        if data.startswith("remove_queue_notification_"):
+            surr_id, border_point = data.removeprefix("remove_queue_notification_").split("_", 1)
+            remove_user_queue_notification_from_db(int(surr_id), query.from_user.id)
+        else:
+            action, surr_id, border_point = data.split("_", 2)
+            set_user_queue_notification_status_in_db(int(surr_id), query.from_user.id, action == "qenable")
+        await query.edit_message_text(
+            NOTIFICATIONS[user_lang]["queue_zone_menu"].format(ESTIMATIONS[user_lang]["border_points_names"][border_point]),
+            reply_markup=InlineKeyboardMarkup(build_queue_tracking_menu(query, border_point, user_lang)),
+            parse_mode=ParseMode.HTML
+        )
         return
 
     elif data == "car_tracking":

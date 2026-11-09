@@ -151,28 +151,23 @@ def build_car_tracking_menu(query, car_type: str, lang: str):
 
 def build_queue_tracking_menu(query, buffer_zone: str, lang: str):
     user_id = query.from_user.id
-    notifications = get_user_queue_notifications_from_db(user_id, None)
-    
+    notifications = get_user_queue_notifications_from_db(user_id, buffer_zone)
+
     keyboard = []
-    if notifications:
-        for notification in notifications:
-            if notification.notification_status:
-                status = "🔔"
-                command = "disable"
-            else:
-                status = "🔕"
-                command = "enable"
+    for notification in notifications:
+        if notification.notification_status:
+            status, command = "🔔", "qdisable"
+        else:
+            status, command = "🔕", "qenable"
 
-            keyboard.append(
-                [InlineKeyboardButton(buffer_zone + status, callback_data=command + f"_{notification.surr_id}_{notification.buffer_zone}"),
-                 InlineKeyboardButton(notification.queue_length, callback_data="noop"),
-                InlineKeyboardButton(BUTTONS[lang]["remove_notification"], callback_data=f"remove_queue_notification_{notification.surr_id}_{notification.buffer_zone}")]
-            )
-        if len(notifications) < 5:
-            keyboard.append([InlineKeyboardButton(BUTTONS[lang]["add_notification"], callback_data=f"add_queue_notification_{buffer_zone}")])
-            keyboard.append([InlineKeyboardButton(BUTTONS[lang]["queue_notifications_back"], callback_data="queue_notifications")])
-
-
+        keyboard.append([
+            InlineKeyboardButton(status, callback_data=f"{command}_{notification.surr_id}_{buffer_zone}"),
+            InlineKeyboardButton(str(notification.queue_length), callback_data="noop"),
+            InlineKeyboardButton(BUTTONS[lang]["remove_notification"], callback_data=f"remove_queue_notification_{notification.surr_id}_{buffer_zone}")
+        ])
+    if len(notifications) < 5:
+        keyboard.append([InlineKeyboardButton(BUTTONS[lang]["add_notification"], callback_data=f"add_queue_notification_{buffer_zone}")])
+    keyboard.append([InlineKeyboardButton(BUTTONS[lang]["queue_notifications_back"], callback_data="queue_notifications")])
 
     return keyboard
 

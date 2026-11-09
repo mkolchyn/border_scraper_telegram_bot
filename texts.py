@@ -238,7 +238,10 @@ NOTIFICATIONS = {
             "For example, if you want to receive notifications when the queue length reaches 100 cars,\n"
             "please enter <b>100</b>."
         ),
-        "queue_length_set": "Queue length set to <b>{}</b> cars. You will receive notifications when the queue reaches this length."
+        "queue_length_set": "Queue length set to <b>{}</b> cars. You will get one message when the queue reaches this length, then the notification will be turned off.",
+        "queue_zone_menu": "{}\n\nQueue notifications for this border point. 🔔 = on, 🔕 = off.",
+        "queue_limit_reached": "You can have at most 5 notifications per border point.",
+        "queue_notification_reached": "🔔 The queue at {} has reached <b>{}</b> (now: <b>{}</b>). This notification is now turned off."
     },
     "ru": {
         "notifications_welcome": (
@@ -255,7 +258,10 @@ NOTIFICATIONS = {
             "Например, если вы хотите получать уведомления, когда длина очереди достигнет 100 машин,\n"
             "введите <b>100</b>."
         ),
-        "queue_length_set": "Длина очереди установлена на <b>{}</b> машин. Вы будете получать уведомления, когда очередь достигнет этой длины."
+        "queue_length_set": "Длина очереди установлена на <b>{}</b> машин. Вы получите одно сообщение, когда очередь достигнет этой длины, после чего уведомление отключится.",
+        "queue_zone_menu": "{}\n\nУведомления об очереди для этого пункта. 🔔 = включено, 🔕 = выключено.",
+        "queue_limit_reached": "Можно создать не более 5 уведомлений для одного пункта.",
+        "queue_notification_reached": "🔔 Очередь на пункте {} достигла <b>{}</b> (сейчас: <b>{}</b>). Уведомление отключено."
     }
 }
 

@@ -267,20 +267,59 @@ def set_user_car_notification_in_db(user_id: int, car: str, notification_type: s
         session.close()
 
 def set_user_queue_notification_in_db(user_id: int, buffer_zone: str, queue_length: int):
-    """Set a queue length notification for a user."""
+    """Create an enabled queue length notification for a user. Returns its surr_id (None on error)."""
     session = get_local_session()
     try:
         new_notification = QueueNotification(
             telegram_id=user_id,
             buffer_zone=buffer_zone,
-            queue_length=queue_length
+            queue_length=queue_length,
+            notification_status=True
         )
         session.add(new_notification)
         session.commit()
+        return new_notification.surr_id
 
     except Exception as e:
         session.rollback()
         print(f"Error saving queue notification: {e}")
+        return None
+    finally:
+        session.close()
+
+def remove_user_queue_notification_from_db(surr_id: int, user_id: int):
+    """Remove a queue notification (only if it belongs to the user)."""
+    session = get_local_session()
+    try:
+        session.query(QueueNotification)\
+            .filter_by(surr_id=surr_id, telegram_id=user_id).delete()
+        session.commit()
+    except Exception as e:
+        session.rollback()
+        print(f"Error removing queue notification: {e}")
+    finally:
+        session.close()
+
+def set_user_queue_notification_status_in_db(surr_id: int, user_id: int, status: bool):
+    """Enable/disable a queue notification (only if it belongs to the user)."""
+    session = get_local_session()
+    try:
+        session.query(QueueNotification)\
+            .filter_by(surr_id=surr_id, telegram_id=user_id)\
+            .update({"notification_status": status})
+        session.commit()
+    except Exception as e:
+        session.rollback()
+        print(f"Error updating queue notification status: {e}")
+    finally:
+        session.close()
+
+def get_all_active_queue_notifications_from_db():
+    """Fetch all enabled queue notifications for all users."""
+    session = get_local_session()
+    try:
+        return session.query(QueueNotification)\
+            .filter_by(notification_status=True).all()
     finally:
         session.close()
 
@@ -306,10 +345,11 @@ def get_user_queue_notifications_from_db(user_id: int, buffer_zone: str):
     try:
         if not buffer_zone:
             notifications = session.query(QueueNotification)\
-                .filter_by(telegram_id=user_id).all()
+                .filter_by(telegram_id=user_id).order_by(QueueNotification.surr_id).all()
         elif buffer_zone:
             notifications = session.query(QueueNotification)\
-                .filter_by(telegram_id=user_id, buffer_zone=buffer_zone).all()
+                .filter_by(telegram_id=user_id, buffer_zone=buffer_zone)\
+                .order_by(QueueNotification.surr_id).all()
         return notifications
     finally:
         session.close()

@@ -22,6 +22,8 @@ from user_utils import (
 )
 from tracking_car import track_user_car
 from multiprocessing import Process
+from threading import Thread
+from queue_checker import run_queue_checker
 
 load_dotenv()
 
@@ -37,6 +39,9 @@ def main():
         car_type = get_user_car_types_from_db(notification.telegram_id, notification.car_plate)
         p = Process(target=track_user_car, args=(notification.surr_id, car_type, user_lang))
         p.start()
+
+    # Background checker for queue length notifications
+    Thread(target=run_queue_checker, daemon=True).start()
 
     app = ApplicationBuilder().token(TOKEN).build()
     app.add_handler(CommandHandler("start", start))
